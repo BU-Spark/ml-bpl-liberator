@@ -16,11 +16,8 @@ from PIL import Image
 # Initialize messy variables here
 NER_ATTRS = ["text", "label_", "start", "end", "start_char", "end_char"]
 
-img = Image.open("bpl-logo.png")
-st.image(img)
-
-# Set header
-st.header("Text Analysis Tool")
+# Set title
+st.title("Text Analysis Tool")
 
 # Sample text to analyze (Liberator excerpt)
 text = "A large number of the colored citizens of Rochester having convened themselves together, for the important object of taking into consideration the anti-republican principles of the American Colonization Society, the Rev. Mr. Johnson was called to the chair, and Mr A. Lawrence was appointed Secretary. The meeting was then briefly addressed by the Secretary as follows: Countrymen and Brothers — When viewing the inhumanity and anti-christian principles of the American Colonization Society, in plotting our removal to Africa, (which is unknown to us as our native country,) it seems as though we were called upon publicly to express our feelings on the subject."
