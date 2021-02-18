@@ -13,17 +13,21 @@ Empty until I put together the faster-rcnn code adapted from [here](https://cola
 
 ## OCR (Optical Character Recognition)
 Take a look at the adaptive thresholding code for now 
-![]('./media/thresh.png')
 
-Ideas 
+### Google Cloud Vision - Text Recognition
 
+<img src="./media/google-cloud-vision-ocr.png" height="250"/>
 
 ## NER (Named Entity Detection)
+
+### Starting the web-app
+streamlit run ```./ner/app.py```
+
 Assuming that we need to know more than just the type of entity, we also need to assign the entity to a Library of Congress identifier. For this purpose, we have created a basic web application using [Streamlit](streamlit.io). 
 
-![]('./media/web-app.png')
+<img src="./media/web-app.png" height="500"/>
 
 The sample text is hard-coded for now but you can select one of the recognized entities in the sidebar and attempt to retrieve the top search results from the Loc API. 
 
-![]('./media/loc-retrieve.png')
+<img src="./media/loc-retrieve.png" height="400"/>
 
