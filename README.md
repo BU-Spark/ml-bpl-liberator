@@ -14,7 +14,7 @@ Full pipleline demonstration in [PipelineExample.ipynb](https://github.com/Sikan
 ## Column Detection (Using Frequency Information)
 Pipeline capable of [detecting columns](https://github.com/jscancella/NYTribuneOCRExperiments/blob/master/findText_usingSums.py) from newspaper scans without using any ML (pattern matching / pattern exploitation instead)
 
-<img src="./ocr/data/tester-countours.jpeg" height="250"/>
+<img src="./ocr/tester-contours.jpeg" width="400"/>
 
 ## OCR (Optical Character Recognition) 
 Google Cloud Vision - [Document Text Detection](https://cloud.google.com/vision/docs/ocr)
