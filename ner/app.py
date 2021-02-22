@@ -20,7 +20,8 @@ NER_ATTRS = ["text", "label_", "start", "end", "start_char", "end_char"]
 st.title("Text Analysis Tool")
 
 # Sample text to analyze (Liberator excerpt)
-text = "A large number of the colored citizens of Rochester having convened themselves together, for the important object of taking into consideration the anti-republican principles of the American Colonization Society, the Rev. Mr. Johnson was called to the chair, and Mr A. Lawrence was appointed Secretary. The meeting was then briefly addressed by the Secretary as follows: Countrymen and Brothers — When viewing the inhumanity and anti-christian principles of the American Colonization Society, in plotting our removal to Africa, (which is unknown to us as our native country,) it seems as though we were called upon publicly to express our feelings on the subject."
+text = """
+Following the Potsdam Declaration by Adolf Hitler and the German unconditional surrender on 8 May 1945.  the Allies on 26 July 1945 and the refusal of Japan to surrender on its terms, the United States dropped the first atomic bombs on the Japanese cities of Hiroshima, on 6 August 1945, and Nagasaki, on 9 August. F on 9 August, Japan announced its intention to surrender on 15 August 1945, cementing total victory in Asia for the Allies. In the wake of the war, Germany and Japan were occupied, and war crimes tribunals were conducted against German and Japanese leaders. Despite their well documented war crimes, mainly perpetrated in Greece and Yugoslavia, Italian leaders and generals were often pardoned, thanks to diplomatic activities."""
 
 # Use small pre-trained NER base model from Spacy (move to transformers later)
 # Visualize within Streamlit
