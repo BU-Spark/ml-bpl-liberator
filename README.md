@@ -24,16 +24,16 @@ Google Cloud Vision - [Document Text Detection](https://cloud.google.com/vision/
 ## Spell Correction
 [autocorrect](https://github.com/fsondej/autocorrect) Python library
 
-## Extracting Articles from Column Level OCR
-TO DO, PHASE 1
-
 ## OOTB NER
-If you are using laptop (NO GPU) use ```space.load('en_core_web_sm')``` 
-If you are using a GPU use ```space.load('en_core_web_trf')``` (new, much higher accuracy, transformer based)
+### (NO GPU) use ```space.load('en_core_web_sm')``` (small model)
+### (GPU) use ```space.load('en_core_web_trf')``` (transformer based)
 
 # Object Detection 
 Proposed faster-rcnn model to extract article start/stop markers from the newspaper
 [faster-rcnn implementation](https://colab.research.google.com/github/a8252525/detectron2_example_PCBdata/blob/master/PCBdata_fasterRCNN_colab.ipynb#scrollTo=WyR8yIqPFcNn)
+
+## Extracting Articles from Column Image OCR
+Detect titles + start/end article markers using a 1-3 class object detection model
 
 ## Labeling Data for Object Detection (not completed)
 1) Label the data with bounding boxes using [Label Studio](labelstud.io)
