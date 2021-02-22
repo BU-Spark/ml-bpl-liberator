@@ -25,8 +25,11 @@ Google Cloud Vision - [Document Text Detection](https://cloud.google.com/vision/
 [autocorrect](https://github.com/fsondej/autocorrect) Python library
 
 ## OOTB NER
-### (NO GPU) use ```space.load('en_core_web_sm')``` (small model)
-### (GPU) use ```space.load('en_core_web_trf')``` (transformer based)
+```python -m spacy download (en_core_web_sm or en_core_web_trf)```
+### (NO GPU)
+```spacy.load('en_core_web_sm')``` (small model)
+### (GPU)
+```spacy.load('en_core_web_trf')``` (transformer based model)
 
 # Object Detection 
 Proposed faster-rcnn model to extract article start/stop markers from the newspaper
