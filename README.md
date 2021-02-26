@@ -12,7 +12,7 @@ Currently this downloads ALL of the data, which may quickly eliminate all your f
 Full pipleline demonstration in [PipelineExample.ipynb](https://github.com/SikandAlex/CS501-BPL-Liberator/blob/main/ocr/PipelineExample.ipynb)
 
 ## Column Detection (Using Frequency Information)
-Pipeline capable of [detecting columns](https://github.com/jscancella/NYTribuneOCRExperiments/blob/master/findText_usingSums.py) from newspaper scans without using any ML (using frequency information)
+Pipeline capable of [detecting columns](https://github.com/jscancella/NYTribuneOCRExperiments/blob/master/findText_usingSums.py) from newspaper scans without using any deep learning (using frequency information) in OpenCV
 
 <img src="./ocr/tester-contours.jpeg" width="400"/>
 
