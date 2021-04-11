@@ -135,36 +135,25 @@ def createColumnImages(img, basename, directory):
     temp_img = dilateDirection(temp_img)
     
     sums = np.sum(temp_img, axis = COLUMNS)
-    print("sums shape: " + str(sums.shape))
+    
     sums[0] = 1000 # some random value so that find_peaks properly detects the peak for the left most column
-    sums = sums * -4 # invert so that minimums become maximums and exagerate the data so it is more clear what the peaks are
-    #peaks = find_peaks_cwt(sums, np.arange(1,10))
-    peaks, _ = find_peaks(sums, distance=600) # the column indexs of the img array, spaced at least 800 away from the previous peak
+    sums = sums * -4 # invert so that minimums become maximums and exagerate the data so it is more clear what the peaks are 
+    
+    peaks, _ = find_peaks(sums, distance=400) # the column indexs of the img array, spaced at least 800 away from the previous peak
+
+
     sum_to_index = dict((sums[peaks[i]], peaks[i]) for i in range(len(peaks)))
     sorted_sums = sorted(sum_to_index.keys())
-    
+    '''
     qr = Q_test(sorted_sums)
     if qr:
         peaks = peaks[peaks != sum_to_index[sorted_sums[0]]]
-
+    '''
     print("PeakNum, Sum, QRemove for " + basename)
     for x in peaks:
-        print(str(x) + ', ' + str(sums[x]) + ', ' + str(qr))
+        print(str(x) + ', ' + str(sums[x]))
     print("----------")
 
-
-    '''
-    #NEW SUMS
-    sums = np.sum(temp_img, axis = COLUMNS)
-    print("sums shape: " + str(sums.shape))
-    smooth_sums = np.add.reduceat(sums, range(0, sums.shape[0], 10))
-    print("smooth sums shape: " + str(smooth_sums.shape))
-    smooth_sums[0] = 10000 # some random value so that find_peaks properly detects the peak for the left most column
-    smooth_sums = smooth_sums * -4 # invert so that minimums become maximums and exagerate the data so it is more clear what the peaks are
-    #peaks = find_peaks_cwt(sums, np.arange(1,10))
-    peaks, _ = find_peaks(smooth_sums, distance=50) # the column indexs of the img array, spaced at least 800 away from the previous peak
-    peaks = peaks*10 + 5
-    '''
     if peaks.size == 0:
         with open('troublesomeImages.txt', 'a') as f:
             print("ERROR: something went wrong with finding the peaks for image: ", os.path.join(directory, basename))
@@ -224,8 +213,8 @@ def test(img, basename):
     #test_img = cv2.imread('./ocr/data/8k71pf94q/2_commonwealth_8k71pf94q_accessFull.jpg')
     test_img = convertToGrayscale(img)
     #ret,test_img = cv2.threshold(test_img,25,255,0)
-    cv2.imwrite('./ocr/test_images/contours/'+basename+'prepixelcrop.jpg', test_img)
-    test_img = test_img[10:h-10, 10: w-10]
+    #cv2.imwrite('./ocr/test_images/contours/'+basename+'prepixelcrop.jpg', test_img)
+    #test_img = test_img[10:h-10, 10: w-10]
     #y_nonzero, x_nonzero = np.nonzero(test_img)
     #test_img = test_img[np.min(y_nonzero):np.max(y_nonzero), np.min(x_nonzero):np.max(x_nonzero)]
     test_img = invert(test_img)
@@ -253,9 +242,23 @@ def test(img, basename):
 
 
 if __name__ == "__main__":
+    print("STARTING")
+    for f in os.listdir('./ocr/data/gb19gw39h/'):
+        if f.endswith(".jpg"):
+            #test(cv2.imread(os.path.join('./ocr/data/gb19gw39h/', f)), 'gb19gw39h-' + f[0])
+            createColumnImages(cv2.imread(os.path.join('./ocr/data/gb19gw39h/', f)), 'gb19gw39h-' + f[0], './ocr/columns/gb19gw39h/')
 
-    #test(cv2.imread('./ocr/data/8k71pf94q/2_commonwealth_8k71pf94q_accessFull.jpg'),'page2')
-    
+    for f in os.listdir('./ocr/data/8k71pf94q/'):
+        if f.endswith(".jpg"):
+            #test(cv2.imread(os.path.join('./ocr/data/gb19gw39h/', f)), 'gb19gw39h-' + f[0])
+            createColumnImages(cv2.imread(os.path.join('./ocr/data/8k71pf94q/', f)), '8k71pf94q-' + f[0], './ocr/columns/8k71pf94q/')
+
+    for f in os.listdir('./ocr/data/mc87rq85m/'):
+        if f.endswith(".jpg"):
+            #test(cv2.imread(os.path.join('./ocr/data/gb19gw39h/', f)), 'gb19gw39h-' + f[0])
+            createColumnImages(cv2.imread(os.path.join('./ocr/data/mc87rq85m/', f)), 'mc87rq85m-' + f[0], './ocr/columns/mc87rq85m/')
+
+    '''
     data_folder = './ocr/data/'
     for folder in os.listdir(data_folder):
         if folder == ".DS_Store":
@@ -265,7 +268,7 @@ if __name__ == "__main__":
                 print("calling test() on " + file)
                 #test(cv2.imread(os.path.join(data_folder, folder, file)),folder+'-'+file[0])
                 createColumnImages(cv2.imread(os.path.join(data_folder, folder, file)), folder+'-'+file[0], './ocr/columns/'+folder+'/')
-    '''
+    
     for f in os.listdir('./ocr/data/8k71pr786/'):
         if f.endswith(".jpg"):
             for d in range(550, 850, 50):

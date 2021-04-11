@@ -2,18 +2,15 @@
 # https://github.com/jscancella/NYTribuneOCRExperiments/blob/master/findText_usingSums.py
 import os
 import io
-from pathlib import Path
 import sys
 os.environ['OPENCV_IO_ENABLE_JASPER']='True' # has to be set before importing cv2 otherwise it won't read the variable
 import numpy as np
 import cv2
-
-import subprocess
-from multiprocessing import Pool
-from scipy.signal import find_peaks, find_peaks_cwt
-
+import random
+from scipy.signal import find_peaks
 import scipy.ndimage as ndimage
 from IPython.display import Image as KImage
+import json
 
 #custom kernel that is used to blend together text in the Y axis
 DILATE_KERNEL = np.array([
@@ -28,8 +25,11 @@ DILATE_KERNEL = np.array([
        [0, 0, 0, 0, 1, 0, 0, 0, 0]], dtype=np.uint8)
 
 
-# Run adaptative thresholding (is slow af compared to not using it in pipeline)
+# Run adaptative thresholding (is slow compared to not using it in pipeline)
 def adaptative_thresholding(img, threshold):
+    '''
+    Unused and not necessary for effectiveness of column extraction, full B/W thresholding works best.
+    '''
     # Load image
     I = img
     # Convert image to grayscale
@@ -67,8 +67,12 @@ def adaptative_thresholding(img, threshold):
     binar = (255*binar).astype(np.uint8)
 
     return binar
+    
 
 def Q_test(sorted_data):
+    '''
+    Dixon's Q-Test to remove false positive in column separators. Unused.
+    '''
     conf95_level = {3: .97, 4: .829, 5: .71, 6: .625, 7: .568, 8: .526, 9: .493}
     q_exp = abs(sorted_data[1] - sorted_data[0]) / abs(sorted_data[-1] - sorted_data[0])
     print(str(abs(sorted_data[1] - sorted_data[0])) + ' / ' + str(abs(sorted_data[-1] - sorted_data[0])))
@@ -83,7 +87,7 @@ GREEN = (0, 255, 0)
 # parameters that can be tweaked
 LINE_THICKNESS = 3 # how thick to make the line around the found contours in the debug output
 PADDING = 10 # padding to add around the found possible column to help account for image skew and such
-CREATE_COLUMN_OUTLINE_IMAGES = True # if we detect that we didn't find all the columns. Create a debug image (tiff) showing the columns that were found
+CREATE_CROPPED_IMAGES = False # Creates and outputs the actual cropping based on contour lines
 
 def columnIndexes(a):
     """
@@ -124,7 +128,7 @@ def dilateDirection(img, debug=False):
     '''
     return temp_img
 
-def createColumnImages(img, basename, directory):
+def createColumnImages(img, basename, directory, debug=False):
     """
     we sum each column of the inverted image. The columns should show up as peaks in the sums
     uses scipy.signal.find_peaks to find those peaks and use them as column indexes
@@ -140,35 +144,8 @@ def createColumnImages(img, basename, directory):
     sums[0] = 1000 # some random value so that find_peaks properly detects the peak for the left most column
     sums = sums * -4 # invert so that minimums become maximums and exagerate the data so it is more clear what the peaks are
     peaks, _ = find_peaks(sums, distance=600) # the column indexs of the img array, spaced at least 800 away from the previous peak
-    
-    '''
-    Code to remove false positive contours
-    sum_to_index = dict((sums[peaks[i]], peaks[i]) for i in range(len(peaks)))
-    sorted_sums = sorted(sum_to_index.keys())
-    qr = Q_test(sorted_sums)
-    if qr:
-        peaks = peaks[peaks != sum_to_index[sorted_sums[0]]]
 
-    print("PeakNum, Sum, QRemove for " + basename)
-    for x in peaks:
-        print(str(x) + ', ' + str(sums[x]) + ', ' + str(qr))
-    print("----------")
-    '''
-
-    '''
-    #NEW SUMS
-    sums = np.sum(temp_img, axis = COLUMNS)
-    print("sums shape: " + str(sums.shape))
-    smooth_sums = np.add.reduceat(sums, range(0, sums.shape[0], 10))
-    print("smooth sums shape: " + str(smooth_sums.shape))
-    smooth_sums[0] = 10000 # some random value so that find_peaks properly detects the peak for the left most column
-    smooth_sums = smooth_sums * -4 # invert so that minimums become maximums and exagerate the data so it is more clear what the peaks are
-    #peaks = find_peaks_cwt(sums, np.arange(1,10))
-    peaks, _ = find_peaks(smooth_sums, distance=50) # the column indexs of the img array, spaced at least 800 away from the previous peak
-    peaks = peaks*10 + 5
-    '''
-
-    if peaks.size == 0:
+    if peaks.size < 5 or peaks.size > 7:
         with open('troublesomeImages.txt', 'a') as f:
             print("ERROR: something went wrong with finding the peaks for image: ", os.path.join(directory, basename))
             f.write(os.path.join(directory, basename) + ".jpg 0\n")
@@ -178,102 +155,71 @@ def createColumnImages(img, basename, directory):
     peaks[-1] =sums.size -1 # automatically make the right most column index the end of the image
 
     boxed = np.copy(img)
-    if peaks.size < 6:
-        with open('troublesomeImages.txt', 'a') as f:
-            print("found image that is causing problems: ", os.path.join(directory, basename))
-            f.write(os.path.join(directory, basename) + ".jpg " + str(peaks.size) + "\n")
-
     columnIndexPairs = columnIndexes(peaks)
 
-    ystart = 0
-    yend = img.shape[0]
-    for columnIndexPair in columnIndexPairs:
-        xstart = max(columnIndexPair[0]-PADDING, 0)
-        xend = min(columnIndexPair[1]+PADDING, img.shape[1])
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        filepath = os.path.join(directory, '%s_xStart%s_xEnd%s.jpg' % (basename, xstart,xend))
-        files.append(filepath)
-        
-        #crop_img = img[ystart:yend, xstart:xend]
-        #print("writing out cropped image: ", filepath)
-        # Apply adaptative thresholding to the image with a threshold of 25/100
-        #crop_img = adaptative_thresholding(crop_img, 25)
-        #if not cv2.imwrite(filepath, crop_img):
-        #    print('failed')
+    if debug:
 
-        if CREATE_COLUMN_OUTLINE_IMAGES:
+        if not os.path.exists(directory):
+                    os.makedirs(directory)
+
+        ystart = 0
+        yend = img.shape[0]
+        for columnIndexPair in columnIndexPairs:
+            xstart = max(columnIndexPair[0]-PADDING, 0)
+            xend = min(columnIndexPair[1]+PADDING, img.shape[1])
+
+            if CREATE_CROPPED_IMAGES:
+                filepath = os.path.join(directory, '%s_xStart%s_xEnd%s.jpg' % (basename, xstart,xend))
+                files.append(filepath)
+
             cv2.rectangle(boxed,(xstart,ystart),(xend,yend), GREEN, LINE_THICKNESS)
 
-    if CREATE_COLUMN_OUTLINE_IMAGES:
         filepath = os.path.join(directory, '%s-contours.jpeg' % basename)
         cv2.imwrite(filepath, boxed, [cv2.IMWRITE_JPEG_QUALITY, 50])
         # For removing the old image?
         # os.remove(os.path.join(directory, basename + ".jp2"))
 
-    return files
-
-def invert_experiment():
-    test_img = cv2.imread('./ocr/data/8k71pf94q/1_commonwealth_8k71pf94q_accessFull.jpg')
-    for thresh in range(1, 200, 20):
-        print('writing thresh= ' + str(thresh))
-        _,temp_img = cv2.threshold(test_img, thresh, 255, cv2.THRESH_BINARY_INV)
-        cv2.imwrite('./ocr/test_images/thresh='+str(thresh)+'.jpg', temp_img)
+    return columnIndexPairs
 
 
+def main(input_dir, debug=False, output_dir=None):
 
-def test(img, basename):
-    #h, w, _ = img.shape
-    #test_img = cv2.imread('./ocr/data/8k71pf94q/2_commonwealth_8k71pf94q_accessFull.jpg')
-    test_img = convertToGrayscale(img)
-    #ret,test_img = cv2.threshold(test_img,25,255,0)
-    cv2.imwrite('./ocr/test_images/contours/'+basename+'prepixelcrop.jpg', test_img)
-    test_img = test_img[10:h-10, 10: w-10]
-    #y_nonzero, x_nonzero = np.nonzero(test_img)
-    #test_img = test_img[np.min(y_nonzero):np.max(y_nonzero), np.min(x_nonzero):np.max(x_nonzero)]
-    test_img = invert(test_img)
-    test_img = dilateDirection(test_img)
-
-    #contours,hierarchy = cv2.findContours(test_img,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    #cnt = contours[0]
-    #x,y,w,h = cv2.boundingRect(cnt)
-    #test_img = cv2.rectangle(img,(10,10),(w-10, h-10), GREEN, LINE_THICKNESS)
-    #test_img = cv2.drawContours(test_img, contours, -1, GREEN, LINE_THICKNESS)
-    #crop = test_img[y:y+h,x:x+w]
-    cv2.imwrite('./ocr/test_images/contours/'+basename+'dilated.jpg', test_img)
     '''
-    for r in range(0, 40, 5):
-        name = 'rank=' + str(r) + ".jpg"
-        path = './ocr/test_images/' + name
+    Entry point for extracting the column separator indices. 
+    Args:
 
-        new_img = ndimage.rank_filter(test_img, rank=r, size=20)
-        print("writing " + name)
-        cv2.imwrite(path, new_img)
-    '''
-    #cv2.imwrite('./ocr/test_images/inverted.jpg', test_img)
+    input_dir (str): directory of input images. Must contain either images directly or subdirectories each containing 
+    a subset of images (such as one full issue). If debug is true, output will imitate the subdirectory structure of input_dir.
 
-    
+    debug (bool): if true and output_dir is provided, outputs images with contour lines dividing columns
 
-
-if __name__ == "__main__":
-
-    #test(cv2.imread('./ocr/data/8k71pf94q/2_commonwealth_8k71pf94q_accessFull.jpg'),'page2')
-    
-    data_folder = './liberator-data/'
-    for folder in os.listdir(data_folder):
-        if len(folder) != 9:
-            continue
-        path = os.path.join(data_folder, folder, 'data')
-        for file in os.listdir(path):
-            if file.endswith(".jpg"):
-                print("calling columnImages() on " + file)
-                #test(cv2.imread(os.path.join(data_folder, folder, file)),folder+'-'+file[0])
-                createColumnImages(cv2.imread(os.path.join(path, file)), folder+'-'+file[0], './column_extraction/'+folder+'/')
-    '''
-    for f in os.listdir('./ocr/data/8k71pr786/'):
-        if f.endswith(".jpg"):
-            for d in range(550, 850, 50):
-                createColumnImages(cv2.imread(os.path.join('./ocr/data/8k71pr786/', f)), '8k71pr786-'+f[0]+'-d=' + str(d), './ocr/test_images/test_contour/8k71pr786/', d)
-            #createColumnImages(cv2.imread('./ocr/data/8k71pr786/'), 'tester2', './ocr/data/columns/tester/')
+    output_dir (str, optional): location of output if debugging
     '''
 
+    if debug and not output_dir:
+        raise Exception("Error: If debugging, must provide an output directory!")
+
+    dict_for_json = {}
+
+    for item in os.listdir(input_dir):
+        print("working on " + item)
+        folder = os.path.join(input_dir, item)
+        if os.path.isdir(folder):
+            cols_dict = dict()
+            for file in os.listdir(folder):
+                if file.endswith('.jpg'):
+                    print("in file " + file)
+                    pairs = createColumnImages(cv2.imread(os.path.join(folder, file)), folder+'-'+file[0], output_dir, debug).tolist()
+                    cols_dict[file] = pairs
+            dict_for_json[item] = cols_dict
+        else:
+            if item.endswith('.jpg'):
+                pairs = createColumnImages(cv2.imread(os.path.join(input_dir, item)), item, output_dir, debug).tolist()
+                dict_for_json[item] = pairs
+
+    with open('cols.txt', 'w') as out:
+        print(dict_for_json)
+        json.dump(dict_for_json, out, indent=4)
+
+if __name__ == '__main__':
+    main('./data/')
