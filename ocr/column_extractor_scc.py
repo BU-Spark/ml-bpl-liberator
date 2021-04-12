@@ -182,7 +182,7 @@ def createColumnImages(img, basename, directory, debug=False):
     return columnIndexPairs
 
 
-def main(input_dir, debug=False, output_dir=None):
+def run_columns(input_dir, debug=False, output_dir=None):
 
     '''
     Entry point for extracting the column separator indices. 
@@ -195,7 +195,7 @@ def main(input_dir, debug=False, output_dir=None):
 
     output_dir (str, optional): location of output if debugging
     '''
-
+    print("Got here")
     if debug and not output_dir:
         raise Exception("Error: If debugging, must provide an output directory!")
 
@@ -222,4 +222,4 @@ def main(input_dir, debug=False, output_dir=None):
         json.dump(dict_for_json, out, indent=4)
 
 if __name__ == '__main__':
-    main('./data/')
+    main('CS501-BPL-Liberator/8k71pf94q')

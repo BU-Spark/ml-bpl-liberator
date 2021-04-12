@@ -138,9 +138,7 @@ def createColumnImages(img, basename, directory):
     
     sums[0] = 1000 # some random value so that find_peaks properly detects the peak for the left most column
     sums = sums * -4 # invert so that minimums become maximums and exagerate the data so it is more clear what the peaks are 
-    
-    peaks, _ = find_peaks(sums, distance=400) # the column indexs of the img array, spaced at least 800 away from the previous peak
-
+    peaks, _ = find_peaks(sums, distance=600) # the column indexs of the img array, spaced at least 800 away from the previous peak
 
     sum_to_index = dict((sums[peaks[i]], peaks[i]) for i in range(len(peaks)))
     sorted_sums = sorted(sum_to_index.keys())
