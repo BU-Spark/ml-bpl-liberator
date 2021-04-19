@@ -143,7 +143,11 @@ def createColumnImages(img, basename, directory, debug=False):
     
     sums[0] = 1000 # some random value so that find_peaks properly detects the peak for the left most column
     sums = sums * -4 # invert so that minimums become maximums and exagerate the data so it is more clear what the peaks are
-    peaks, _ = find_peaks(sums, distance=600) # the column indexs of the img array, spaced at least 800 away from the previous peak
+    if basename.startswith("gb"):
+        dist = 400
+    else:
+        dist = 600
+    peaks, _ = find_peaks(sums, distance=dist) # the column indexs of the img array, spaced at least 800 away from the previous peak
 
     if peaks.size < 5 or peaks.size > 7:
         with open('troublesomeImages.txt', 'a') as f:
@@ -182,7 +186,7 @@ def createColumnImages(img, basename, directory, debug=False):
     return columnIndexPairs
 
 
-def main(input_dir, debug=False, output_dir=None):
+def run_columns(input_dir, output_dir, debug=False):
 
     '''
     Entry point for extracting the column separator indices. 
@@ -191,13 +195,12 @@ def main(input_dir, debug=False, output_dir=None):
     input_dir (str): directory of input images. Must contain either images directly or subdirectories each containing 
     a subset of images (such as one full issue). If debug is true, output will imitate the subdirectory structure of input_dir.
 
-    debug (bool): if true and output_dir is provided, outputs images with contour lines dividing columns
+    output_dir (str): location of output JSON
 
-    output_dir (str, optional): location of output if debugging
+    debug (bool): if true, outputs images with contour lines dividing columns
+
+    Output: if debug, images with contour lines. If not debug, writes json in output_dir
     '''
-
-    if debug and not output_dir:
-        raise Exception("Error: If debugging, must provide an output directory!")
 
     dict_for_json = {}
 
@@ -217,9 +220,7 @@ def main(input_dir, debug=False, output_dir=None):
                 pairs = createColumnImages(cv2.imread(os.path.join(input_dir, item)), item, output_dir, debug).tolist()
                 dict_for_json[item] = pairs
 
-    with open('cols.txt', 'w') as out:
+
+    with open(os.path.join(output_dir, 'cols.json'), 'a') as out:
         print(dict_for_json)
         json.dump(dict_for_json, out, indent=4)
-
-if __name__ == '__main__':
-    main('./data/')
