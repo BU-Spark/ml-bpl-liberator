@@ -18,6 +18,7 @@ segmentation-models = "~=1.0.1"
 colorama = ">=0.4.4"
 pillow = "~=8.0.1"
 pytesseract = "0.3.6"
+IPython = "7.6.1"
 
 [requires]
 python_version = "3.7"
