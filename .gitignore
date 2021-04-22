@@ -1,2 +1,11 @@
-
+ocr/__pycache__
 ocr/.credentials/
+ocr/.ipynb_checkpoints
+data/cropped_articles/*
+data/hold
+.idea
+.vscode
+__pycache__
+ocr/test_images
+data/.DS_Store
+ocr/extract_articles/.DS_Store

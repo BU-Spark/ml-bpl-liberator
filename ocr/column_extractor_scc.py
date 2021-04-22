@@ -221,6 +221,6 @@ def run_columns(input_dir, output_dir, debug=False):
                 pairs = createColumnImages(cv2.imread(os.path.join(input_dir, item)), item, output_dir, debug).tolist()
                 dict_for_json[item] = pairs
 
-    with open(Path(output_dir).joinpath('cols.json'), 'a') as out:
+    with open(Path(output_dir).joinpath('cols.json'), 'w') as out:
         print(dict_for_json)
         json.dump(dict_for_json, out, indent=4)

@@ -7,6 +7,7 @@ from ocr import column_extractor_scc
 from ocr.extract_articles.extract_polygons import segment_all_images
 sys.path.append('./bbz-segment/05_prediction/src')
 import detect_gen
+from ocr import crop_ocr
 
 
 print("Running column extraction...")
@@ -24,3 +25,8 @@ for item in os.listdir(definitions.INPUT_DIR):
         os.makedirs(npy_out, exist_ok=True)
         os.makedirs(debug_out, exist_ok=True)
         segment_all_images(npy_out, folder, definitions.JSON_OUTPUT, item+"_segment.json", False)
+
+print("Cropping articles for OCR...")
+for item in os.listdir(definitions.JSON_OUTPUT):
+    if not item.startswith('cols'):
+        crop_ocr.crop_articles(os.path.join(definitions.JSON_OUTPUT, item))
