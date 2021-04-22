@@ -9,3 +9,4 @@ __pycache__
 ocr/test_images
 data/.DS_Store
 ocr/extract_articles/.DS_Store
+.DS_Store
