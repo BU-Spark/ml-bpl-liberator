@@ -5,9 +5,33 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 # Introduction
 
+## Project Overview and Goal
+
+## Birds-Eye-View of Pipeline
+
 # Getting Started
 
+## How it Works
+
+## Dependencies
+
+## Run the Pipeline!
+
+## Notes and Considerations
+
+## Data Downloader/Input Format
+
+
 # Detailed Overview
+
+## Column Extractor
+
+## Article Segmentation
+
+## OCR & NER
+
+
+# Further Work
 
 # Downloading Data
 Download data using the ```./utils/download-liberator.py``` and the included CSV file 
