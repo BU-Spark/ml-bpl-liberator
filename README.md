@@ -3,6 +3,12 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 <img src="https://www.bu.edu/spark/files/2017/04/spark-logo-round.png" height="100"/> <img src="https://cor-liv-cdn-static.bibliocommons.com/images/MA-BOSTON-BRANCH/logo.png?1613638160260" width="200"/> 
 
+# Introduction
+
+# Getting Started
+
+# Detailed Overview
+
 # Downloading Data
 Download data using the ```./utils/download-liberator.py``` and the included CSV file 
 
