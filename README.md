@@ -7,6 +7,12 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 ## Project Overview and Goal
 
+  *The Liberator* is a 19th-century abolitionist and womens' rights newspaper, founded and published by the abolitionist William Lloyd Garrison. The Boston Public Library's Digital Repository houses a full scanned archive of the newspaper, and this project's goal is to digitize and digest the articles and their text. Doing so requires a multi-stage process, consisting of article segmentation, optical character recognition (OCR) of text, and named entity recognition (NER) of the extracted article-level text.
+  
+  ## Why Machine Learning
+  
+  This project and its requirements naturally lend themselves to the advantages of a machine learning approach. OCR and NER tools have been widely improved by machine learning approaches, and there exist vast libraries and toolkits to aid in the simple out-of-the-box development of custom OCR/NER pipelines, some of which will be discussed here. Further, the problem of intelligent and accurate article segmentation necessitates the use of machine learning, specifically that of neural networks. In our problem, as is commonly the case with historic newspaper digitization work, the Liberator dataset is not a perfectly-scanned digitization. Many misaligned scans, damaged papers, and blemished pages throw off any direct segmentation approach. Furthermore, over the 30+ year run of The Liberator, the paper underwent constant design and layout changes, making intelligent article extraction a necessity.
+
 ## Birds-Eye-View of Pipeline
 
 # Getting Started
