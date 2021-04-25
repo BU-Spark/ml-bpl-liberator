@@ -38,7 +38,3 @@ def crop_articles(segmentJSONPath):
             crop_article(image['filename'], image['coordinates'][0], image['coordinates'][1], image['coordinates'][2], image['coordinates'][3], article_counter, image_counter, issue)
             image_counter += 1
         article_counter += 1
-
-
-
-    
