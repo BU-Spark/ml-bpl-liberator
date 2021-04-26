@@ -12,3 +12,4 @@ ocr/extract_articles/.DS_Store
 .DS_Store
 config
 ocr/extract_articles/files_hold
+ner/.ipynb_checkpoints

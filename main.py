@@ -10,7 +10,7 @@ from ocr.extract_articles.extract_polygons import segment_all_images
 sys.path.append('./bbz-segment/05_prediction/src')
 import detect_gen
 from ocr import crop_ocr
-from ner.StanzaNER import StanzaNER
+from ner.stanza_ner import StanzaNER
 
 
 
