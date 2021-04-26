@@ -15,9 +15,13 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 ## Birds-Eye-View of Pipeline
 
+<img src="./media/diagram.png" width="800"/>
+
 # Getting Started
 
 ## How it Works
+
+
 
 ## Dependencies
 
