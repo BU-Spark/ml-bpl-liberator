@@ -4,6 +4,7 @@ import os
 import sys
 from colorama import Fore, init
 init(autoreset=True)
+from argparse import ArgumentParser
 
 from ocr import column_extractor_scc
 from ocr.extract_articles.extract_polygons import segment_all_images
@@ -12,6 +13,17 @@ import detect_gen
 from ocr import crop_ocr
 from ner.stanza_ner import StanzaNER
 
+parser = ArgumentParser()
+parser.add_argument("-i", "--input_dir")
+args = vars(parser.parse_args())
+
+if args['input_dir'] is not None:
+    if not os.path.exists(args['input_dir']):
+        print(Fore.RED + "Invalid input directory given: " + args['input_dir'])
+        print(Fore.RED + "Quitting...")
+        sys.exit()
+    else:
+        definitions.INPUT_DIR = args['input_dir']
 
 
 print(Fore.CYAN + "Running column extraction...")
