@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 import spacy
 import natas
+from autocorrect import Speller
 
 nlp = spacy.load('en_core_web_md')
+spell = Speller()
 
 app = Flask(__name__)
 
-@app.route('/ocr_correct', methods=['POST'])
+@app.route('/natas_correct', methods=['POST'])
 def ocr_correct():
 
     incorrect = []
@@ -22,7 +24,6 @@ def ocr_correct():
  
     for w in doc:
         word = w.text
-        print(w.text)
         correct = natas.is_correctly_spelled(word)
         if not correct:
             incorrect.append(word)
@@ -40,6 +41,24 @@ def ocr_correct():
     response = {"original": input_ocr_text, "corrected": output}
 
     return response
+    
+
+@app.route('/autocorrect', methods=['POST'])
+def autocorrect():
+    input_ocr_text = request.form['text']
+    only_replacements = bool(request.form['only_replacements'])
+    if only_replacements:
+        spell2 = Speller(only_replacements=True)
+        corrected = spell2(input_ocr_text)
+    else:
+        corrected = spell(input_ocr_text)
+    
+    response = {"original": input_ocr_text, "corrected": corrected}
+
+    return response
+
 
 if __name__ == '__main__':
     app.run()
+    
+
