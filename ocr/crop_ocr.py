@@ -10,7 +10,7 @@ from google.cloud import vision_v1 as vision
 import io
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 import definitions
-from ner import StanzaNER
+from ner.stanza_ner import StanzaNER
 
 # This environment variable needs to be set with your credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(definitions.CONFIG_DIR, "credentials.json")
