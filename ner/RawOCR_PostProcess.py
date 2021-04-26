@@ -1,16 +1,14 @@
 # https://github.com/mikahama/natas
-import natas, spacy
+import natas
 
 print("\n[INFO] CACHE is enabled by default for natas")
 
 print("Loading spacy model...")
 
-nlp = spacy.load('en_core_web_md')
+def correct_raw_ocr(ocr_text, nlp):
 
-incorrect = []
-words = []
-
-def correct_raw_ocr(ocr_text):
+    incorrect = []
+    words = []
     
     doc = nlp(input_ocr_text)
     
