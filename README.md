@@ -31,7 +31,6 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 ## Data Downloader/Input Format
 
-
 # Detailed Overview
 
 ## Column Extractor
@@ -39,7 +38,9 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 ## Article Segmentation
 
 ## OCR & NER
+The articles crops are passed to Google Cloud Vision Document Text Detection API and we retrieve the outputted text. If the OCR model produces mispelled words or isn't as 'clean' as we would like, we pass the raw OCR output to one of two spell-correction libraries natas / autocorrect as form-data to a Flask API. This increases the quality of the OCR results. 
 
+After the text has been extracted and cleaned up, we fine-tuned a spacy en_core_web_lg model with streamlit to detect several entities of interest to the Boston Public Library. We intend to implement additional rule-based and dictionary-based approaches to increase the accuracy of the NER model.  
 
 # Further Work
 
