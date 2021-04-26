@@ -84,8 +84,7 @@ class ImageBox(object):
     def JSON(self) -> dict:
         return {"filename": self.filename,
                 "page": self.img_id,
-                "coordinates": [self.top_left.row, self.top_left.col, self.bot_right.row, self.bot_right.col],
-                "text": self.box_text}
+                "coordinates": [self.top_left.row, self.top_left.col, self.bot_right.row, self.bot_right.col]}
 
 
 class Article(object):

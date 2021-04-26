@@ -10,3 +10,5 @@ ocr/test_images
 data/.DS_Store
 ocr/extract_articles/.DS_Store
 .DS_Store
+config
+ocr/extract_articles/files_hold

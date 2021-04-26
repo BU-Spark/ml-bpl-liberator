@@ -105,7 +105,7 @@ def convertToGrayscale(img):
 
 def invert(img):
     """ Black -> White | White -> Black """
-    print("invert image")
+    #print("invert image")
     # Should we edit these parameters?
     #3/18/21 - experimented on threshold, 140 is good.
     _,temp_img = cv2.threshold(img, 140, 255, cv2.THRESH_BINARY_INV)
@@ -120,7 +120,7 @@ def dilateDirection(img, debug=False):
     So we dilate it. Since noise is gone, they won't come back, but our object area increases. 
     It is also useful in joining broken parts of an object. 
     """
-    print("applying dilation morph")
+    #print("applying dilation morph")
     temp_img = cv2.dilate(img, DILATE_KERNEL, iterations=15) #the more iterations the more the text gets stretched in the Y axis, 15 seems about right.
     '''
     if debug:
@@ -222,5 +222,5 @@ def run_columns(input_dir, output_dir, debug=False):
                 dict_for_json[item] = pairs
 
     with open(Path(output_dir).joinpath('cols.json'), 'w') as out:
-        print(dict_for_json)
+        #print(dict_for_json)
         json.dump(dict_for_json, out, indent=4)

@@ -19,6 +19,8 @@ colorama = ">=0.4.4"
 pillow = "~=8.0.1"
 pytesseract = "0.3.6"
 IPython = "7.6.1"
+google-cloud-vision = "2.3.1"
+stanza = "1.2"
 
 [requires]
 python_version = "3.7"

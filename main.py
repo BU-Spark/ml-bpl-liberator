@@ -2,21 +2,26 @@ import definitions
 import argparse
 import os
 import sys
+from colorama import Fore, init
+init(autoreset=True)
 
 from ocr import column_extractor_scc
 from ocr.extract_articles.extract_polygons import segment_all_images
 sys.path.append('./bbz-segment/05_prediction/src')
 import detect_gen
 from ocr import crop_ocr
+from ner.StanzaNER import StanzaNER
 
 
-print("Running column extraction...")
-column_extractor_scc.run_columns(definitions.INPUT_DIR, definitions.JSON_OUTPUT)
 
-print("Running object detection model...")
+print(Fore.CYAN + "Running column extraction...")
+os.makedirs(definitions.SEGMENT_OUTPUT, exist_ok=True)
+column_extractor_scc.run_columns(definitions.INPUT_DIR, definitions.SEGMENT_OUTPUT)
+
+print(Fore.CYAN + "Running object detection model...")
 detect_gen.bulk_generate_separators(definitions.INPUT_DIR, 'jpg', definitions.NPY_OUTPUT, True, False, False)
 
-print("Running article segmentation...")
+print(Fore.CYAN + "Running article segmentation...")
 for item in os.listdir(definitions.INPUT_DIR):
     folder = os.path.join(definitions.INPUT_DIR, item)
     if os.path.isdir(folder):
@@ -24,9 +29,19 @@ for item in os.listdir(definitions.INPUT_DIR):
         debug_out = os.path.join(definitions.DEBUG_OUTPUT, item)
         os.makedirs(npy_out, exist_ok=True)
         os.makedirs(debug_out, exist_ok=True)
-        segment_all_images(npy_out, folder, definitions.JSON_OUTPUT, item+"_segment.json", False)
+        segment_all_images(npy_out, folder, definitions.SEGMENT_OUTPUT, item+"_segment.json", False)
 
-print("Cropping articles for OCR...")
-for item in os.listdir(definitions.JSON_OUTPUT):
+if not os.path.exists(os.path.join(definitions.CONFIG_DIR, "credentials.json")):
+    print(Fore.RED + "No Google Cloud credentials found, unable to complete OCR/NER")
+    print(Fore.RED + "Quitting...")
+    sys.exit()
+
+print(Fore.CYAN + "Loading NER Models...")
+NER_PIPELINE = StanzaNER()
+
+print(Fore.CYAN + "Producing OCR & NER for issues...")
+for item in os.listdir(definitions.SEGMENT_OUTPUT):
     if not item.startswith('cols'):
-        crop_ocr.crop_articles(os.path.join(definitions.JSON_OUTPUT, item))
+        crop_ocr.issue_ocr(os.path.join(definitions.SEGMENT_OUTPUT, item), NER_PIPELINE)
+
+print(Fore.CYAN + "Complete, wrote data.json to " + definitions.JSON_OUTPUT)
