@@ -48,10 +48,9 @@ Then, install Python dependencies. Use `pip3 install pipenv` to get pipenv first
 
 Now you should have all of the dependencies installed.
 
-Finally, you are ready to run. To run with the provided test files inside of data/input_images/, just run with **python main.py**. To run on another directory,
+Finally, you are ready to run. To run with the provided test files inside of data/input_images/, just run with `python main.py`. To run on another directory,
 run with `python main.py -i <absolute path to input directory>`. The input directory you are providing must follow the same issue organization and naming schema
 as data/input_images/.
-
 
 ## Notes and Considerations
 
@@ -69,3 +68,5 @@ The articles crops are passed to Google Cloud Vision Document Text Detection API
 After the text has been extracted and cleaned up, we fine-tuned a spacy en_core_web_lg model with streamlit to detect several entities of interest to the Boston Public Library. We intend to implement additional rule-based and dictionary-based approaches to increase the accuracy of the NER model.  
 
 # Further Work
+
+# References and Attributions
