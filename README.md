@@ -21,24 +21,36 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 ## How it Works
 
-The entire pipeline looks for input images in either a directory provided as an argument, or by looking inside of data/input_images if no argument is provided. By simply running main.py, the entire pipeline will be ran on the provided test files inside of input_images. This is a convenient way to familiarize with the usage of the app and also for grading. Otherwise, a full absolute path to a image directory that follows the provided directory organization scheme is also doable.
+The entire pipeline looks for input images in either a directory provided as an argument, or by looking inside of data/input_images if no argument is provided. By simply running main.py without arguments, the entire pipeline will be ran on the provided test files inside of input_images. This is a convenient way to familiarize oneself with the function of the app and also for grading. Otherwise, a full absolute path to a image directory that follows the provided directory organization scheme is also doable.
 
 ## Dependencies
-All Python dependendicies for this pipeline are provided in the Pipfile. To install the dependencies, the only requirement is to have pipenv installed and simply run `pipenv shell` to enter the virtual environment. This is explained in more detail below.
+All Python dependendicies for this pipeline are handled with the Pipfile. Usage of the Pipfile and pipenv is explained in more detail below.
 
-Additionally, there are a few packages and files that will need to be manually downloaded and placed in order to run the full pipeline.
+More pertinently, there are a few packages and files that will need to be manually downloaded and placed in order to run the full pipeline.
 
-bbz-segment/05_predicition/data/models
-ner/stanza_resources
-config/credentials.json
+1. bbz-segment/05_predicition/**data/models** - Inside of the subdirectory bbz-segment/05_prediction, it is required to create the subdirectory **data/** and place the models folder containing the pre-trained ML models for article segmentation. This pre-trained TensorFlow model is available [https://www.dropbox.com/sh/7tph1tzscw3cb8r/AAA9WxhqoKJu9jLfVU5GqgkFa?dl=0](here), by the original authors.
 
-For Flask API run in a conda environment with python=3.6 with natas and spacy 
+2. ner/**stanza_resources** - The NER portion of the pipeline uses Stanza, an NLP package by the Stanford NLP Group. stanza-resources contains the language processors required to process and tag text. The folder can be found [](here) and should be placed inside ner/.
+
+3. **config/credentials.json** - For the OCR, we utilize Google Cloud Vision. Google CV requires setting up a service account and setting the proper environment variable to point to your credentials.json. Our pipeline automatically checks and sets the appropriate environment variable to point to a credentials.json file inside of a **config** directory. All that needs to be done is to create a config/ directory in the main project directory and place the Google CV credentials.json (with that exact name) inside of it. More information can be found here: https://cloud.google.com/vision/docs/libraries#setting_up_authentication.
 
 ## Run the Pipeline!
 
-This section shares comprehensive instructions on running the pipeline.
+This section shares step-by-step instructions on running the pipeline.
 
+Get the repo with `git clone https://github.com/SikandAlex/CS501-BPL-Liberator.git`
 
+Next, using the information under the **Dependencies** section, ensure each of the necessary packages are properly placed.
+
+Then, install Python dependencies. Use `pip3 install pipenv` to get pipenv first, then, from __inside of the project root directory__:
+1. `pipenv install`
+2. `pipenv shell`
+
+Now you should have all of the dependencies installed.
+
+Finally, you are ready to run. To run with the provided test files inside of data/input_images/, just run with **python main.py**. To run on another directory,
+run with `python main.py -i <absolute path to input directory>`. The input directory you are providing must follow the same issue organization and naming schema
+as data/input_images/.
 
 
 ## Notes and Considerations
