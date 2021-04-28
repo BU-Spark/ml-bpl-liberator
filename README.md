@@ -28,7 +28,7 @@ All Python dependendicies for this pipeline are handled with the Pipfile. Usage 
 
 More pertinently, there are a few packages and files that will need to be manually downloaded and placed in order to run the full pipeline.
 
-1. bbz-segment/05_predicition/**data/models** - Inside of the subdirectory bbz-segment/05_prediction, it is required to create the subdirectory **data/** and place the models folder containing the pre-trained ML models for article segmentation. This pre-trained TensorFlow model is available [here on Dropbox](https://www.dropbox.com/sh/7tph1tzscw3cb8r/AAA9WxhqoKJu9jLfVU5GqgkFa?dl=0), by the original authors.
+1. bbz-segment/05_predicition/**data/models** - Inside of the subdirectory bbz-segment/05_prediction, it is required to create the subdirectory **data/** and place the models folder containing the pre-trained ML models for article segmentation. This pre-trained TensorFlow model is available [here on Dropbox](https://www.dropbox.com/sh/7tph1tzscw3cb8r/AAA9WxhqoKJu9jLfVU5GqgkFa?dl=0), by the original authors. Please note, that in this directory, you will find two folders: *blkx* and *sep*. The *sep* models are the only ones utilized for this project, so for your own memory considerations, it may be preferable to only download this folder, ensuring in the end that the parent directories are all in the same order (data/models/v3/sep/).
 
 2. ner/**stanza_resources** - The NER portion of the pipeline uses Stanza, an NLP package by the Stanford NLP Group. stanza-resources/ contains the language processors required to process and tag entities in text. The folder can be found [here on Google Drive](https://drive.google.com/drive/folders/1Le0sxSRzmzdCAIeZRRKjs9mjaD-VCmcd?usp=sharing) and should be placed inside of the directory ner/.
 
@@ -52,27 +52,47 @@ Now you should have all of the dependencies installed.
 
 Finally, you are ready to run. To run with the provided test files inside of data/input_images/, just run with `python main.py`. To run on another directory,
 run with `python main.py -i <absolute path to input directory>`. The input directory you are providing must follow the same issue organization and naming schema
-as data/input_images/. Please read the below Notes and Considerations before running!
+as data/input_images/. 
 
-## Notes and Considerations
+## Notes
 
-This pipeline is heavy in computing power and time. Running the three-issue test set through the entire pipeline on a 2015 Macbook Pro, Intel i5 2.7 GHz processor took about ~15 minutes and a lot of whirring. For grading or testing purposes, it would be okay to remove two full issues from input_images/. This is not necessary, however.
+Note that this pipeline is heavy in computing power and time. Running the three-issue test set through the entire pipeline on a 2015 Macbook Pro, Intel i5 2.7 GHz processor took about ~15 minutes and a lot of whirring. For grading or testing purposes, it would be okay to remove some data from input_images/, ensuring that the directory organization is still consistent.
+
+If running on the SCC, I've found that the best method is to request a Desktop node from interactive apps rather than running directly on a terminal in SCC. Due to the way user paths/environment variables are set in the SCC, running pipenv in the terminal may be problematic.
 
 ## Data Downloader/Input Format
 
 Inside of utils, there is a data_downloader.py and a data_organization.py file. These are the scripts used on BU's Shared Computing Cluster to download and organize The Liberator dataset for our use. While they are tailored to run on the SCC, one can use and edit these if one wanted to download or save part of the dataset (the full dataset is considerably large!).
 
-# Detailed Overview
+# Detailed Breakdown of Pipeline
 
-## Column Extractor
+The actual pipeline processes the input in four major stages: column extraction & object detection, article segmentation, OCR & NER, and final output consolidation.
+
+## Column Extraction and Object Detection
+
+In order to segment articles out of the newspaper, a machine will need guiding entities that can signal the bounding boxes of article text. In many historic newspapers, just as in The Liberator, these come in the form of vertical dividing lines creating columns and smaller, thin horizontal lines separating the ends and starts of different articles.
+
+Detecting these bounding lines was done using two processing methods. First, we considered, and in the end deployed, an object detection neural network that could recognize and label objects on a page image such as horizontal separators and vertical separators. This task was done by applying the trained model from a similar research task, [found here](https://arxiv.org/abs/2004.07317), with the corresponding GitHub repo [here](https://github.com/poke1024/bbz-segment). 
+
+"bbz-segment", as the repo and project are called, was built for the exact same problem statement as ours: article segmentation on a historical newspaper, this one being a German paper named Berliner B¨orsen-Zeitung (BBZ). The difference in this task, however, is that BBZ is made with a much more complex article layout structure than what is seen anywhere on The Liberator. Still, the task of detecting article separators and other objects on the page remains the same.
+
+The bbz-segment problem was done with models built for two purposes, *blkxk* models were built to detect and extract larger objects such as text regions, background, tables, and images on a page. The *sep* models, which were ulitmately the models adapted to this project, aimed to detect separator objects, primarily dividing lines, on the pixel-level.
+
+The *sep* models to detect these separating objects were built using transfer learning on the [EfficientNet](https://ai.googleblog.com/2019/05/efficientnet-improving-accuracy-and.html) architecture with pre-trained weights on the ImageNet dataset and fine-tuned with manually labeled pages of BBZ. We found that applying the *sep* models directly onto The Liberator gave usable results in the article segmentation phase.
 
 ## Article Segmentation
+
+Adapting the work from last semester's team on BPL's The Liberator, the actual article segmentation of the pages was done by using the object information detecting from the bbz-segment models and calculating the appropriate bounding boxes for articles dependent on 
 
 ## OCR & NER
 The articles crops are passed to Google Cloud Vision Document Text Detection API and we retrieve the outputted text. If the OCR model produces mispelled words or isn't as 'clean' as we would like, we pass the raw OCR output to one of two spell-correction libraries natas / autocorrect as form-data to a Flask API. This increases the quality of the OCR results. 
 
 After the text has been extracted and cleaned up, we fine-tuned a spacy en_core_web_lg model with streamlit to detect several entities of interest to the Boston Public Library. We intend to implement additional rule-based and dictionary-based approaches to increase the accuracy of the NER model.  
 
-# Further Work
+## JSON Output
+
+
+
+# Other Approaches and Further Work
 
 # References and Attributions
