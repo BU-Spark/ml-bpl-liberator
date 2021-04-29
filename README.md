@@ -3,6 +3,10 @@
 Repository containing code related to Boston University's Spark ML Practicum (CS 501 T2) collaboration with Boston Public Library.
 
 
+<p align="center">
+  <img width="700" src="./media/header.png">
+</p>
+
 
 # Introduction
 
