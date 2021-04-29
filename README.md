@@ -1,9 +1,13 @@
 # CS501-BPL-Liberator
 Repository containing code related to Boston University's Spark ML Practicum (CS 501 T2) collaboration with Boston Public Library.
 
-<img src="https://www.bu.edu/spark/files/2017/04/spark-logo-round.png" height="100"/> <img src="https://cor-liv-cdn-static.bibliocommons.com/images/MA-BOSTON-BRANCH/logo.png?1613638160260" width="200"/> 
 
-<img src="./media/header.png" width="400"/>
+<p align="center">
+  <img width="460" height="300" src="./media/header.png">
+</p>
+
+
+<img align="left" img src="https://www.bu.edu/spark/files/2017/04/spark-logo-round.png" height="100"/> <img align="right " img src="https://cor-liv-cdn-static.bibliocommons.com/images/MA-BOSTON-BRANCH/logo.png?1613638160260" width="200"/> 
 
 
 # Introduction
