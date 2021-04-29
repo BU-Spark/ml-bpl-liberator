@@ -34,6 +34,8 @@ More pertinently, there are a few packages and files that will need to be manual
 
 3. **config/credentials.json** - For the OCR, we utilize Google Cloud Vision. Accessing the Google CV API requires setting up a service account and setting the proper environment variable to point to your credentials.json file, containing the API Key information. Our pipeline automatically checks and sets the appropriate environment variable to point to a credentials.json file inside of a **config** directory. All that needs to be done is to create a config/ directory in the main project directory and place the Google CV credentials.json (with that same filename) inside of it. Detailed steps to create a service account and download a credentials.json with your API Key can be found here: https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account.
 
+__Please note__, Google Cloud Vision API requests are charged above 1000 units of text detection. For the given test files of 3 full issues, the requests to CV will be *far* below the 1000 unit threshold (40-80 articles are detected per full issue). In case you decide to run on more test files or multiple times, ensure that you are aware of the [costs and quotas.](https://cloud.google.com/vision/pricing#google_cloud_platform_costs)
+
 Without a credentials.json, the pipeline will still run up to article segmentation, and then announce that it is quitting the rest of the pipeline.
 
 ## Run the Pipeline!
@@ -52,7 +54,7 @@ Now you should have all of the dependencies installed.
 
 Finally, you are ready to run. To run with the provided test files inside of data/input_images/, just run with `python main.py`. To run on another directory,
 run with `python main.py -i <absolute path to input directory>`. The input directory you are providing must follow the same issue organization and naming schema
-as data/input_images/. 
+as data/input_images/. Please read the Notes below before a full run.
 
 ## Notes
 
@@ -60,9 +62,13 @@ Note that this pipeline is heavy in computing power and time. Running the three-
 
 If running on the SCC, I've found that the best method is to request a Desktop node from interactive apps rather than running directly on a terminal in SCC. Due to the way user paths/environment variables are set in the SCC, running pipenv in the terminal may be problematic.
 
+The TensorFlow version needed to run the pre-trained model is an older one (1.15), but this is handled by the Pipfile. Nonetheless, there are some warning messages that may appear during a full run of the pipeline. The model is still able to run fully despite these terminal messages.
+
 ## Data Downloader/Input Format
 
-Inside of utils, there is a data_downloader.py and a data_organization.py file. These are the scripts used on BU's Shared Computing Cluster to download and organize The Liberator dataset for our use. While they are tailored to run on the SCC, one can use and edit these if one wanted to download or save part of the dataset (the full dataset is considerably large!).
+Inside of utils, there is a data_downloader.py and a data_organization.py file. These are the scripts used on BU's Shared Computing Cluster to download and organize The Liberator dataset for our use. While they are tailored to run on the SCC, one can edit and use these to download or save part of the dataset (the full dataset is considerably large!).
+
+Under the SCC class directory, under /liberator_team/liberator_data/, is the full dataset for The Liberator. One can download or copy these folders for custom testing.
 
 # Detailed Breakdown of Pipeline
 
@@ -70,9 +76,9 @@ The actual pipeline processes the input in four major stages: column extraction 
 
 ## Column Extraction and Object Detection
 
-In order to segment articles out of the newspaper, a machine will need guiding entities that can signal the bounding boxes of article text. In many historic newspapers, just as in The Liberator, these come in the form of vertical dividing lines creating columns and smaller, thin horizontal lines separating the ends and starts of different articles.
+In order to segment articles out of the newspaper, a machine will need guiding entities that can signal the bounding boxes of article text. In many historic newspapers, just as in The Liberator, these come in the form of vertical dividing lines creating columns, and smaller, thin horizontal lines separating the ends and starts of different articles.
 
-Detecting these bounding lines was done using two processing methods. First, we considered, and in the end deployed, an object detection neural network that could recognize and label objects on a page image such as horizontal separators and vertical separators. This task was done by applying the trained model from a similar research task, [found here](https://arxiv.org/abs/2004.07317), with the corresponding GitHub repo [here](https://github.com/poke1024/bbz-segment). 
+Detecting these bounding lines was done using two processing methods. First we considered, and in the end deployed, an object detection neural network that could recognize and label objects on a page image such as horizontal separators and vertical separators. This task was done by applying the trained model from a similar research task, [found here](https://arxiv.org/abs/2004.07317), with the corresponding GitHub repo [here](https://github.com/poke1024/bbz-segment). 
 
 "bbz-segment", as the repo and project are called, was built for the exact same problem statement as ours: article segmentation on a historical newspaper, this one being a German paper named Berliner B¨orsen-Zeitung (BBZ). The difference in this task, however, is that BBZ is made with a much more complex article layout structure than what is seen anywhere on The Liberator. Still, the task of detecting article separators and other objects on the page remains the same.
 
@@ -80,19 +86,43 @@ The bbz-segment problem was done with models built for two purposes, *blkxk* mod
 
 The *sep* models to detect these separating objects were built using transfer learning on the [EfficientNet](https://ai.googleblog.com/2019/05/efficientnet-improving-accuracy-and.html) architecture with pre-trained weights on the ImageNet dataset and fine-tuned with manually labeled pages of BBZ. We found that applying the *sep* models directly onto The Liberator gave usable results in the article segmentation phase.
 
+The other segmentation approach we attempted was not a neural network, but rather, a method of layered image augmentations to detect and extract regions of text. Primarily, we implemented a column extractor using the knowledge of empty spacing between columns of text. Using the approach from [this repo](https://github.com/jscancella/NYTribuneOCRExperiments) which did the same on historic NYCTribune newspaper pages, we were able to get a column extractor working quite well on our Liberator dataset. The idea was to use this column separator information in conjunction with some method to find the horizontal separators within columns, likely with a similar object detection model. In the end, the amalgation of this column separator information with bbz-segment was problematic, so the column extractor is still ran in the pipeline but is currently a vestigial product. We anticpate that future teams can use this column extraction approach as an intermediate stage for better segmentation and OCR.
+
 ## Article Segmentation
 
-Adapting the work from last semester's team on BPL's The Liberator, the actual article segmentation of the pages was done by using the object information detecting from the bbz-segment models and calculating the appropriate bounding boxes for articles dependent on 
+Adapting the work from last semester's team on BPL's The Liberator, the actual article segmentation of the pages was done by using the object information detected from the bbz-segment models and calculating the appropriate bounding boxes for articles. 
+
+In building upon this work, our primary addition was the use of filters throughout the pipeline to delete false positive segmentations. Often, the bbz-segment method would result in many "articles" which were in fact not articles at all, but often section headers or seemingly random blank space. First, logical filtering was done by removing any segments that were too small (<200px) or oddly-shaped (e.g., spanning half of the page horizontally).
+
+More creatively, we used the next stage in the pipeline, the OCR, to make inferences about the validity of an article segmentation. Due to the effectiveness of Google CV's OCR and the high quality of our dataset, we believe it was a safe hypothesis that any time no text (or extremely little text) was extracted from an article image, it signaled a false positive. We filtered out these articles in the OCR stage before they were added to the final output.
 
 ## OCR & NER
-The articles crops are passed to Google Cloud Vision Document Text Detection API and we retrieve the outputted text. If the OCR model produces mispelled words or isn't as 'clean' as we would like, we pass the raw OCR output to one of two spell-correction libraries natas / autocorrect as form-data to a Flask API. This increases the quality of the OCR results. 
 
-After the text has been extracted and cleaned up, we fine-tuned a spacy en_core_web_lg model with streamlit to detect several entities of interest to the Boston Public Library. We intend to implement additional rule-based and dictionary-based approaches to increase the accuracy of the NER model.  
+After article segmentation, the pipeline runs a cropping script upon all of the articles and puts the cropped images through Google Cloud Vision's API for OCR. This OCR engine is already proven to be very effective, and on a high-quality dataset like The Liberator, extracting text was shown to be a cakewalk for Google CV. There are small hiccups primarily due to the old language used in the newspaper, and a post-processing spell corrector was considered and attempted on our pipeline. Another possible OCR engine considered was Google Tesseract, an open-source and free alternative to Google CV.
+
+The extracted text from the OCR portion is put through Stanford CoreNLP's Stanza package, an NLP package for entity recognition. Out of the box, this package is very simple to use, effective, and free as well. We've found excellent results in Stanza and with its ease-of-use, ultimately chose this package for our NER requirements. Another package considered was spaCy entity recognizer, and spaCy was again used for the attempted spell-correction portion of the pipeline.
 
 ## JSON Output
 
+The final output of the entire pipeline is a JSON output full of the entire input dataset's processing. The output JSON encodes article information, including file/page location, location coordinates, OCR text, title, and named entities. 
 
 
-# Other Approaches and Further Work
+# Further Work
+
+The primary area of improvement is in the article segmentation accuracy. Indeed, we believe the accuracy and effectiveness of article segmentation can be greatly improved by finetuning the given sep models from bbz-segment with Liberator data, or, transfer learning on the EfficientNet architecture directly just as in bbz-segment. According to the research in bbz-segment's approach, 40 fully-labeled newspaper pages are enough to obtain a reasonably accurate object detection model for a given usecase.
+
+The stages of our pipeline are built in linear fashion, where an entire stage must be complete for all inputs before the next stage can begin. This is slow and inefficient even on the SCC. It would be a worthwhile effort to multithread many of the processes inside of the article segmentation portion of the pipeline, and the main stages of the pipeline themselves.
+
+We have some starter code on running a spell-correcter library after the OCR, which would clean up any OCR errors. It may be a valuable addition to the pipeline.
 
 # References and Attributions
+
+Liebl, B., & Burghardt, M. (2020). An Evaluation of DNN Architectures for Page Segmentation of Historical Newspapers. https://arxiv.org/abs/2004.07317v1
+
+Peng Qi, Yuhao Zhang, Yuhui Zhang, Jason Bolton and Christopher D. Manning. 2020. Stanza: A Python Natural Language Processing Toolkit for Many Human Languages. In Association for Computational Linguistics (ACL) System Demonstrations. 2020. [pdf][bib]
+
+https://medium.com/@blacksmithforlife/better-ocr-for-newspapers-c7c1e2788b7a
+
+https://github.com/weirdindiankid/CS501-Liberator-Project
+
+Many thanks to the Fall '20 Liberator team and https://github.com/IanSaucy for their start and advice on this project, and also to the BU Spark! faculty and staff.
