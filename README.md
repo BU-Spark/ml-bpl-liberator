@@ -34,8 +34,6 @@ More pertinently, there are a few packages and files that will need to be manual
 
 3. **config/credentials.json** - For the OCR, we utilize Google Cloud Vision. Accessing the Google CV API requires setting up a service account and setting the proper environment variable to point to your credentials.json file, containing the API Key information. Our pipeline automatically checks and sets the appropriate environment variable to point to a credentials.json file inside of a **config** directory. All that needs to be done is to create a config/ directory in the main project directory and place the Google CV credentials.json (with that same filename) inside of it. Detailed steps to create a service account and download a credentials.json with your API Key can be found here: https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account.
 
-__Please note__, Google Cloud Vision API requests are charged above 1000 units of text detection. For the given test files of 3 full issues, the requests to CV will be *far* below the 1000 unit threshold (40-80 articles are detected per full issue). In case you decide to run on more test files or multiple times, ensure that you are aware of the [costs and quotas.](https://cloud.google.com/vision/pricing#google_cloud_platform_costs)
-
 Without a credentials.json, the pipeline will still run up to article segmentation, and then announce that it is quitting the rest of the pipeline.
 
 ## Run the Pipeline!
@@ -57,6 +55,8 @@ run with `python main.py -i <absolute path to input directory>`. The input direc
 as data/input_images/. Please read the Notes below before a full run.
 
 ## Notes
+
+__Please note__, Google Cloud Vision API requests are charged above 1000 units of text detection. For the given test files of 3 full issues, the requests to CV will be *far* below the 1000 unit threshold (40-80 articles are detected per full issue). In case you decide to run on more test files or multiple times, ensure that you are aware of the [costs and quotas.](https://cloud.google.com/vision/pricing#google_cloud_platform_costs)
 
 Note that this pipeline is heavy in computing power and time. Running the three-issue test set through the entire pipeline on a 2015 Macbook Pro, Intel i5 2.7 GHz processor took about ~15 minutes and a lot of whirring. For grading or testing purposes, it would be okay to remove some data from input_images/, ensuring that the directory organization is still consistent.
 
