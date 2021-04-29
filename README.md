@@ -106,6 +106,8 @@ The extracted text from the OCR portion is put through Stanford CoreNLP's Stanza
 
 The final output of the entire pipeline is a JSON output full of the entire input dataset's processing. The output JSON encodes article information, including file/page location, location coordinates, OCR text, title, and named entities. 
 
+The final presentation of this project for Spark! gave a detailed breakdown of the JSON output and its analogy to the actual Liberator pages. The presentation is available [here on Google Slides](https://docs.google.com/presentation/d/1ic3R6HgVVC_7Ymgjw_hyrITFRV563MjEC8D31PpCte4/edit?usp=sharing).
+
 
 # Further Work
 
