@@ -148,6 +148,7 @@ def issue_ocr(segment_json_path, NER_PIPELINE):
     '''
 
     # Open and load article segmentation info
+    print('opening file:' + segment_json_path)
     f = open(segment_json_path)
     json_data = json.load(f)
     cur_issue_id = json_data[0]['issue_id']

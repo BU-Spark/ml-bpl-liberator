@@ -53,7 +53,7 @@ NER_PIPELINE = StanzaNER()
 
 print(Fore.CYAN + "Producing OCR & NER for issues...")
 for item in os.listdir(definitions.SEGMENT_OUTPUT):
-    if not item.startswith('cols'):
+    if not item.startswith('cols') and not item.startswith('.DS_Store'):
         crop_ocr.issue_ocr(os.path.join(definitions.SEGMENT_OUTPUT, item), NER_PIPELINE)
 
-print(Fore.CYAN + "Complete, wrote data.json to " + definitions.JSON_OUTPUT)
+print(Fore.GREEN + "Complete, wrote data.json to " + definitions.JSON_OUTPUT)
