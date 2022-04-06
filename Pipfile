@@ -21,6 +21,8 @@ pytesseract = "0.3.6"
 IPython = "7.6.1"
 google-cloud-vision = "2.3.1"
 stanza = "1.2"
+pytest = "7.1.1" #for github actions testing (look in .github)
+
 
 [requires]
 python_version = "3.7"
