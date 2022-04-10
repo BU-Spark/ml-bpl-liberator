@@ -13,7 +13,7 @@ import detect_gen
 from ocr import crop_ocr
 from ner.stanza_ner import StanzaNER
 
-test_directory = "./test_sample/8k71pf94q"
+test_directory = ".github/workflows/test_sample/8k71pf94q"
 if test_directory is not None:
     if not os.path.exists(test_directory):
         print(Fore.RED + "Invalid input directory given: " + test_directory)
