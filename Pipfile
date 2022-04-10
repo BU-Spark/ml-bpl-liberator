@@ -21,6 +21,7 @@ pytesseract = "0.3.6"
 IPython = "7.6.1"
 google-cloud-vision = "2.3.1"
 stanza = "1.2"
+ipykernel = "*"
 
 [requires]
 python_version = "3.7"
