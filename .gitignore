@@ -18,3 +18,5 @@ bbz-segment/ocr/.credentials
 **/.DS_Store
 **/.ipynb_checkpoints
 config
+definitions.pyc
+pyvenv.cfg
