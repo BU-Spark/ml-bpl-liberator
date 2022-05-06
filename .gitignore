@@ -5,9 +5,9 @@ data/cropped_articles/*
 data/npy_outputs
 data/segment_outputs
 
-#ner/stanza_resources (aded to lfs)
+ner/stanza_resources
 
-#bbz-segment/05_prediction/data/models (added to lfs)
+bbz-segment/05_prediction/data/models
 
 .idea
 **/.vscode
