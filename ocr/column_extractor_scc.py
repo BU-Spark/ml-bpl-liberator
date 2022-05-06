@@ -213,7 +213,9 @@ def run_columns(input_dir, output_dir, debug=False):
             for file in os.listdir(folder):
                 if file.endswith('.jpg'):
                     print("in file " + file)
-                    pairs = createColumnImages(cv2.imread(os.path.join(folder, file)), folder+'-'+file[0], output_dir, debug).tolist()
+                    pairs = createColumnImages(cv2.imread(os.path.join(folder, file)), folder+'-'+file[0], output_dir, debug)
+                    if type(pairs) != list:
+                        pairs = pairs.tolist()
                     cols_dict[file] = pairs
             dict_for_json[item] = cols_dict
         else:
