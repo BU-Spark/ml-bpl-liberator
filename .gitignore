@@ -6,8 +6,9 @@ ocr/test_images
 
 data/cropped_articles/*
 data/hold
-data/npy_outputs
-data/segment_outputs
+data/npy_outputs/*
+data/segment_outputs/*
+data/output_images/*
 
 ner/stanza_resources
 
