@@ -206,6 +206,8 @@ def run_columns(input_dir, output_dir, debug=False):
     dict_for_json = {}
 
     for item in os.listdir(input_dir):
+        if item == ".DS_Store":
+            continue
         print("working on " + item)
         folder = os.path.join(input_dir, item)
         if os.path.isdir(folder):
