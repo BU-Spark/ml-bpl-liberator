@@ -92,3 +92,5 @@ wcwidth==0.2.5
 Werkzeug==2.1.1
 wrapt==1.14.0
 zipp==3.8.0
+pandas==1.4.2
+wget==3.2
