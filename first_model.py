@@ -13,14 +13,17 @@ import detect_gen
 from ocr import crop_ocr
 from ner.stanza_ner import StanzaNER
 
-test_directory = ".github/workflows/test_sample"
-if test_directory is not None:
-    if not os.path.exists(test_directory):
-        print(Fore.RED + "Invalid input directory given: " + test_directory)
+parser = ArgumentParser()
+parser.add_argument("-i", "--input_dir")
+args = vars(parser.parse_args())
+
+if args['input_dir'] is not None:
+    if not os.path.exists(args['input_dir']):
+        print(Fore.RED + "Invalid input directory given: " + args['input_dir'])
         print(Fore.RED + "Quitting...")
         sys.exit()
     else:
-        definitions.INPUT_DIR = test_directory
+        definitions.INPUT_DIR = args['input_dir']
 
 
 print(Fore.CYAN + "Running column extraction...")
@@ -52,5 +55,3 @@ print(Fore.CYAN + "Producing OCR & NER for issues...")
 for item in os.listdir(definitions.SEGMENT_OUTPUT):
     if not item.startswith('cols') and not item.startswith('.DS_Store'):
         crop_ocr.issue_ocr(os.path.join(definitions.SEGMENT_OUTPUT, item), NER_PIPELINE)
-
-print(Fore.GREEN + "Complete, wrote data.json to " + definitions.JSON_OUTPUT)
