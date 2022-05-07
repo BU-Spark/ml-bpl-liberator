@@ -1,6 +1,6 @@
 # CS501-BPL-Liberator
 
-Repository containing code related to Boston University's Spark ML Practicum (CS 501 T2) collaboration with Boston Public Library.
+Repository containing code related to Boston University's Spark ML Practicum (CS 549) collaboration with Boston Public Library.
 
 
 <p align="center">
@@ -13,7 +13,8 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 ## Project Overview and Goal
 
-  *The Liberator* is a 19th-century abolitionist and womens' rights newspaper, founded and published by the abolitionist William Lloyd Garrison. The Boston Public Library's Digital Repository houses a full scanned archive of the newspaper, and this project's goal is to digitize and digest the articles and their text. Existing optical character recognition (OCR) models would interpret a newspaper page as one piece of text and attempt to read it from the left edge to the right edge before wrapping around again. This would produce nonsensical output for our input data. To leverage existing OCR solutions, we implement a multi-stage pipeline, consisting of article segmentation, OCR of text, and named entity recognition (NER) of the extracted article-level text.
+  *The Liberator* is a 19th-century abolitionist and womens' rights newspaper, founded and published by the abolitionist William Lloyd Garrison. The Boston Public Library's Digital Repository houses a full scanned archive of the newspaper. There are ~1800 issues of The Liberator in the dataset, with 4 pages per issue, so ~7,500 pages (images) in total. Each page has a 4-8 articles. This projects goal is to create a searchable JSON file with full text, relevant topics, title, subtitle and image information for every article. This is to improve access to this resource for reasearchers by allowing them to search it by topic, text, title, etc. We implement a multi-stage pipeline, consisting of article segmentation, OCR of text, named entity recognition (NER), and text classification of the extracted article-level text.
+
   
   ## Why Machine Learning?
   
@@ -58,9 +59,18 @@ The TensorFlow version needed to run the pre-trained model is an older one (1.15
 
 ## Data Downloader/Input Format
 
-Inside of utils, there is a data_downloader.py and a data_organization.py file. These are the scripts used on BU's Shared Computing Cluster to download and organize The Liberator dataset for our use. While they are tailored to run on the SCC, one can edit and use these to download or save part of the dataset (the full dataset is considerably large!).
+Inside of data/, there is a download_liberator.py (the downloader) and a liberator_full_dataset.csv. The downloader is extensively commented for ease of use. The downloader downloads the full The Liberator dataset based off issue id, image id and file URLs from the CSV file.
 
-Under the SCC class directory, under /liberator_team/liberator_data/, is the full dataset for The Liberator. One can download or copy these folders for custom testing.
+NOTES: 
+
+By default when you run download_liberator.py it will download the full dataset (~7,500 images or 40 GB) to a directory on the same level called 'full_dataset'. Within this directory will be a directory for each issue, named after its issue ID. Images will be saved to the correct issue directory, about 4 images per issue. If images are already present in the correct issue directory, they will not be downloaded twice.
+
+USAGE:
+
+- If you dont want to download the full dataset, change num_pages to the number of images you want to download (useful for testing)
+  - if you want to download the full dataset later these images wont be downloaded twice
+- Change csv_data_fname to a different csv to read from (if neccessary)
+- Change save_directory to the name of the directory to download to (not reccomended)
 
 # Detailed Breakdown of Pipeline
 
