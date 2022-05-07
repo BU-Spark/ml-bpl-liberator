@@ -41,9 +41,9 @@ Without a credentials.json, the pipeline will still run up to article segmentati
 
 This section shares step-by-step instructions on running the pipeline.
 
-Get the repo with `git clone https://github.com/SikandAlex/CS501-BPL-Liberator.git`
+Get the repo with `git clone https://github.com/BU-Spark/ml-bpl-liberator.git`
 
-Next, using the information under the **Dependencies** section, ensure each of the necessary packages are properly placed.
+Next, using the information under the **Dependencies** section, ensure each of the necessary packages are properly placed, and the virtual environments are properly configured.
 
 The entire pipeline looks for input images in either a directory provided as an argument, or by looking inside of data/input_images if no argument is provided. By simply running `make run_model` (if on a local machine) or `make run_model_scc` (if on the SCC) without arguments, the entire pipeline will be ran on the provided test files inside of input_images. This is a convenient way to familiarize oneself with the function of the app and also for grading. Otherwise, a full absolute path to an image directory that follows the provided directory organization scheme is also doable (make run_model input_directory=path/to/input/directory). The input directory you are providing must follow the same issue organization and naming schema as data/input_images/. Please read the Notes below before a full run.
 
@@ -108,13 +108,13 @@ The extracted text from the OCR portion is put through Stanford CoreNLP's Stanza
 
 After the OCR & NER are completed, the text classification part of the model begins (second_model.py). Given the fact that there is no labeled data, we implemented an unsupervised approach to multi-label text classification called lbl2vec. The github repo for that project can be viewed [here](https://github.com/sebischair/Lbl2Vec). This model takes in the labels to classify text as, keywords associated with these labels (specified by our sponsor at BPL, Eben English), along with the documents we are classifying and automatically produces similarity scores for each document to each respective label.
 
-One important note is that the source code for lbl2vec uses [doc2vec](https://radimrehurek.com/gensim/models/doc2vec.html) under the hood. It automatically specifies a parameter for the doc2vec that ignores all words that are represented under 50 times in the dataset. We found this parameter to be beneficial for the model's prediction when being run on a large number of issues (10+). However, when running on 3 or less issues it causes the model to not recognize all keywords for a given label, leading the model training sequence to crash. We have found for testing purposes, an easy workaround is to simply specify "the" as one of the keywords for each label to ensure it does not crash, or by changing the internal source code to not specify the `min_count` parameter.
+One important note is that the source code for lbl2vec uses [doc2vec](https://radimrehurek.com/gensim/models/doc2vec.html) under the hood. It automatically specifies a parameter for the doc2vec that ignores all words that are represented under 50 times in the dataset. We found this parameter to be beneficial for the model's predictions when being run on a large number of issues (10+). However, when running on 3 or less issues it causes the model to not recognize all keywords for a given label, leading the model training sequence to crash. We have found for testing purposes, an easy workaround is to simply specify "the" as one of the keywords for each label to ensure it does not crash, or by changing the internal source code to not specify the `min_count` parameter.
 
 ## JSON Output
 
 The final output of the entire pipeline is a JSON output full of the entire input dataset's processing. The output JSON encodes article information, including file/page location, location coordinates, OCR text, title, named entities, and the three most likely subjects as determined by the lbl2vec model. 
 
-The final presentation of this project for Spark! gave a detailed breakdown of the JSON output and its analogy to the actual Liberator pages. The presentation is available [here on Google Slides](https://docs.google.com/presentation/d/1ic3R6HgVVC_7Ymgjw_hyrITFRV563MjEC8D31PpCte4/edit?usp=sharing).
+The final presentation of this project for Spark! gave a detailed breakdown of the JSON output and its analogy to the actual Liberator pages. The presentation is available [here on Google Slides](https://docs.google.com/presentation/d/1of0GB3tVkiWhEsMYsZdNCNg7joV3LmISnw3UpSzlnxc/edit).
 
 
 # Further Work
@@ -126,6 +126,9 @@ The stages of our pipeline are built in linear fashion, where an entire stage mu
 We have some starter code on running a spell-correcter library after the OCR, which would clean up any OCR errors. It may be a valuable addition to the pipeline.
 
 # References and Attributions
+
+Schopf, T.; Braun, D. and Matthes, F. (2021). Lbl2Vec: An Embedding-based Approach for Unsupervised Document Retrieval on Predefined Topics. In Proceedings of the 17th International Conference on Web Information Systems and Technologies - WEBIST, ISBN 978-989-758-536-4; ISSN 2184-3252, pages 124-132. DOI: 10.5220/0010710300003058. https://www.scitepress.org/Link.aspx?doi=10.5220/0010710300003058
+
 
 Liebl, B., & Burghardt, M. (2020). An Evaluation of DNN Architectures for Page Segmentation of Historical Newspapers. https://arxiv.org/abs/2004.07317v1
 
