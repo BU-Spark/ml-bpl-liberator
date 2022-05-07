@@ -1,0 +1,2 @@
+ner/stanza_resources filter=lfs diff=lfs merge=lfs -text
+bbz-segment/05_prediction/data filter=lfs diff=lfs merge=lfs -text
