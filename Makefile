@@ -19,8 +19,8 @@ else
 endif
 
 set_up_venvs:
-	python3 -m virtualenv -p=$(python_path_one) virtualenvs/venv1
-	python3 -m virtualenv -p=$(python_path_two) virtualenvs/venv2
+	python3 -m virtualenv -p=$(python_path_one) virtualenvs/venv1 && source virtualenvs/venv1/bin/activate && pip install -r requirements_1.txt && deactivate
+	python3 -m virtualenv -p=$(python_path_two) virtualenvs/venv2 && source virtualenvs/venv2/bin/activate && pip install -r requirements_2.txt && deactivate
 
 set_up_venvs_scc:
 	module load python3/3.8.3 && python3 -m virtualenv virtualenvs/venv2 && source virtualenvs/venv2/bin/activate && pip install -r requirements_2.txt && deactivate

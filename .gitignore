@@ -20,3 +20,5 @@ bbz-segment/05_prediction/data/models
 config
 definitions.pyc
 pyvenv.cfg
+
+virtualenvs
