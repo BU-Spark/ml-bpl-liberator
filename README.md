@@ -1,6 +1,7 @@
 # CS501-BPL-Liberator
 
-Repository containing code related to Boston University's Spark ML Practicum (CS 549) collaboration with Boston Public Library.
+Repository containing code related to Boston University's Spark ML Practicum (CS 501 T2) collaboration with Boston Public Library.
+
 
 <p align="center">
   <img width="700" src="./media/header.png">
@@ -12,32 +13,26 @@ Repository containing code related to Boston University's Spark ML Practicum (CS
 
 ## Project Overview and Goal
 
-  *The Liberator* is a 19th-century abolitionist and womens' rights newspaper, founded and published by the abolitionist William Lloyd Garrison. The Boston Public Library's Digital Repository houses a full scanned archive of the newspaper. There are ~1800 issues of The Liberator in the dataset, with 4 pages per issue, so ~7,500 pages (images) in total. Each page has a 4-8 articles. This projects goal is to create a searchable JSON file with full text, relevant topics, title, subtitle and image information for every article. This is to improve access to this resource for reasearchers by allowing them to search it by topic, text, title, etc. We implement a multi-stage pipeline, consisting of article segmentation, OCR of text, named entity recognition (NER), and text classification of the extracted article-level text.
+  *The Liberator* is a 19th-century abolitionist and womens' rights newspaper, founded and published by the abolitionist William Lloyd Garrison. The Boston Public Library's Digital Repository houses a full scanned archive of the newspaper, and this project's goal is to digitize and digest the articles and their text. Existing optical character recognition (OCR) models would interpret a newspaper page as one piece of text and attempt to read it from the left edge to the right edge before wrapping around again. This would produce nonsensical output for our input data. To leverage existing OCR solutions, we implement a multi-stage pipeline, consisting of article segmentation, OCR of text, and named entity recognition (NER) of the extracted article-level text.
   
   ## Why Machine Learning?
   
-  This project and its requirements naturally lend themselves to the advantages of a machine learning approach. OCR and NER tools have been widely improved by machine learning approaches, and there exist vast libraries and toolkits to aid in the simple out-of-the-box development of custom OCR/NER pipelines, some of which will be discussed here. Further, the problem of intelligent and accurate article segmentation necessitates the use of machine learning, specifically that of neural networks. In our problem, as is commonly the case with historic newspaper digitization work, The Liberator dataset is not a perfectly-scanned digitization. Many misaligned scans, damaged papers, and blemished pages throw off any direct segmentation approach. Furthermore, over the 30+ year run of The Liberator, the paper underwent constant design and layout changes, making intelligent article extraction a necessity.
+  This project and its requirements naturally lend themselves to the advantages of a machine learning approach. OCR and NER tools have been widely improved by machine learning approaches, and there exist vast libraries and toolkits to aid in the simple out-of-the-box development of custom OCR/NER pipelines, some of which will be discussed here. Further, the problem of intelligent and accurate article segmentation necessitates the use of machine learning, specifically that of neural networks. In our problem, as is commonly the case with historic newspaper digitization work, The Liberator dataset is not a perfectly-scanned digitization. Many misaligned scans, damaged papers, and blemished pages throw off any direct segmentation approach. Furthermore, over the 30+ year run of The Liberator, the paper underwent constant design and layout changes, making intelligent article extraction a necessity. Additionally, classifying the articles into predefined categories detailed by the Library of Congress is an instance of a problem commonly solved with the use of machine learning, text classification.
 
 ## Birds-Eye-View of Pipeline
 
-<img src="./media/diagram.png" width="700"/>
+<img src="./media/diagram.png" width="600"/>
 
 # Getting Started
 
-## How it Works
-
-The entire pipeline looks for input images in either a directory provided as an argument, or by looking inside of data/input_images if no argument is provided. By simply running main.py without arguments, the entire pipeline will be ran on the provided test files inside of input_images. This is a convenient way to familiarize oneself with the function of the app and also for grading. Otherwise, a full absolute path to a image directory that follows the provided directory organization scheme is also doable.
-
 ## Dependencies
-All Python dependendicies for this pipeline are handled with the Pipfile. Usage of the Pipfile and pipenv is explained in more detail below.
+1. All Python dependencies for this pipeline are handled with python virtual environments. The first part of the model (first_model.py) is run with the first virtual environment, and the second part of the model (second_model.py) is run with the second virtual environment. This is due to competing dependencies - the first model requires python 3.7 due to utilization of tensorflow 1, whereas the second part of the model requires python 3.8 due to the utilizaion of the lbl2vec module. To set up the virtual environments on a local machine, run `make set_up_venvs python_path_one=path/to/python/3.7 python_path_two=path/to/python/3.8`. To set up the virtual environments on the SCC, simply run `make set_up_venvs_scc` and python versions will be taken care of for automatically. 
 
-More pertinently, there are a few packages and files that will need to be manually downloaded and placed in order to run the full pipeline.
+2. bbz-segment/05_predicition/**data/models** - Inside of the subdirectory bbz-segment/05_prediction, it is required to create the subdirectory **data/** and place the models folder containing the pre-trained ML models for article segmentation. This pre-trained TensorFlow model is available [here on Dropbox](https://www.dropbox.com/sh/7tph1tzscw3cb8r/AAA9WxhqoKJu9jLfVU5GqgkFa?dl=0), by the original authors. Please note, that in this directory, you will find two folders: *blkx* and *sep*. The *sep* models are the only ones utilized for this project, so for your own memory considerations, it may be preferable to only download this folder, ensuring in the end that the parent directories are all in the same order (data/models/v3/sep/).
 
-1. bbz-segment/05_predicition/**data/models** - Inside of the subdirectory bbz-segment/05_prediction, it is required to create the subdirectory **data/** and place the models folder containing the pre-trained ML models for article segmentation. This pre-trained TensorFlow model is available [here on Dropbox](https://www.dropbox.com/sh/7tph1tzscw3cb8r/AAA9WxhqoKJu9jLfVU5GqgkFa?dl=0), by the original authors. Please note, that in this directory, you will find two folders: *blkx* and *sep*. The *sep* models are the only ones utilized for this project, so for your own memory considerations, it may be preferable to only download this folder, ensuring in the end that the parent directories are all in the same order (data/models/v3/sep/).
+3. ner/**stanza_resources** - The NER portion of the pipeline uses Stanza, an NLP package by the Stanford NLP Group. stanza-resources/ contains the language processors required to process and tag entities in text. The folder can be found [here on Google Drive](https://drive.google.com/drive/folders/1Le0sxSRzmzdCAIeZRRKjs9mjaD-VCmcd?usp=sharing) and should be placed inside of the directory ner/.
 
-2. ner/**stanza_resources** - The NER portion of the pipeline uses Stanza, an NLP package by the Stanford NLP Group. stanza-resources/ contains the language processors required to process and tag entities in text. The folder can be found [here on Google Drive](https://drive.google.com/drive/folders/1Le0sxSRzmzdCAIeZRRKjs9mjaD-VCmcd?usp=sharing) and should be placed inside of the directory ner/.
-
-3. **config/credentials.json** - For the OCR, we utilize Google Cloud Vision. Accessing the Google CV API requires setting up a service account and setting the proper environment variable to point to your credentials.json file, containing the API Key information. Our pipeline automatically checks and sets the appropriate environment variable to point to a credentials.json file inside of a **config** directory. All that needs to be done is to create a config/ directory in the main project directory and place the Google CV credentials.json (with that same filename) inside of it. Detailed steps to create a service account and download a credentials.json with your API Key can be found here: https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account.
+4. **config/credentials.json** - For the OCR, we utilize Google Cloud Vision. Accessing the Google CV API requires setting up a service account and setting the proper environment variable to point to your credentials.json file, containing the API Key information. Our pipeline automatically checks and sets the appropriate environment variable to point to a credentials.json file inside of a **config** directory. All that needs to be done is to create a config/ directory in the main project directory and place the Google CV credentials.json (with that same filename) inside of it. Detailed steps to create a service account and download a credentials.json with your API Key can be found here: https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account.
 
 Without a credentials.json, the pipeline will still run up to article segmentation, and then announce that it is quitting the rest of the pipeline.
 
@@ -49,15 +44,7 @@ Get the repo with `git clone https://github.com/SikandAlex/CS501-BPL-Liberator.g
 
 Next, using the information under the **Dependencies** section, ensure each of the necessary packages are properly placed.
 
-Then, install Python dependencies. Use `pip3 install pipenv` to get pipenv first, then, from __inside of the project root directory__:
-1. `pipenv install`
-2. `pipenv shell`
-
-Now you should have all of the dependencies installed.
-
-Finally, you are ready to run. To run with the provided test files inside of data/input_images/, just run with `python main.py`. To run on another directory,
-run with `python main.py -i <absolute path to input directory>`. The input directory you are providing must follow the same issue organization and naming schema
-as data/input_images/. Please read the Notes below before a full run.
+The entire pipeline looks for input images in either a directory provided as an argument, or by looking inside of data/input_images if no argument is provided. By simply running `make run_model` (if on a local machine) or `make run_model_scc` (if on the SCC) without arguments, the entire pipeline will be ran on the provided test files inside of input_images. This is a convenient way to familiarize oneself with the function of the app and also for grading. Otherwise, a full absolute path to an image directory that follows the provided directory organization scheme is also doable (make run_model input_directory=path/to/input/directory). The input directory you are providing must follow the same issue organization and naming schema as data/input_images/. Please read the Notes below before a full run.
 
 ## Notes
 
@@ -67,26 +54,17 @@ Note that this pipeline is heavy in computing power and time. Running the three-
 
 If running on the SCC, I've found that the best method is to request a Desktop node from interactive apps rather than running directly on a terminal in SCC. Due to the way user paths/environment variables are set in the SCC, running pipenv in the terminal may be problematic.
 
-The TensorFlow version needed to run the pre-trained model is an older one (1.15), but this is handled by the Pipfile. Nonetheless, there are some warning messages that may appear during a full run of the pipeline. The model is still able to run fully despite these terminal messages.
+The TensorFlow version needed to run the pre-trained model is an older one (1.15), but this is handled by the requirements_1.txt file. Nonetheless, there are some warning messages that may appear during a full run of the pipeline. The model is still able to run fully despite these terminal messages.
 
 ## Data Downloader/Input Format
 
-Inside of data, there is a download_liberator.py (the downloader) and a liberator_full_dataset.csv. The downloader is extensively commented for ease of use. The downloader downloads the full The Liberator dataset based off issue id, image id and file URLs from the CSV file.
+Inside of utils, there is a data_downloader.py and a data_organization.py file. These are the scripts used on BU's Shared Computing Cluster to download and organize The Liberator dataset for our use. While they are tailored to run on the SCC, one can edit and use these to download or save part of the dataset (the full dataset is considerably large!).
 
-NOTES: 
-
-By default when you run download_liberator.py it will download the full dataset (~7,500 images or 40 GB) to a directory on the same level called 'full_dataset'. Within this directory will be a directory for each issue, named after its issue ID. Images will be saved to the correct issue directory, about 4 images per issue. If images are already present in the correct issue directory, they will not be downloaded twice.
-
-USAGE:
-
-- If you dont want to download the full dataset, change num_pages to the number of images you want to download
-  - if you want to download the full dataset later these images wont be downloaded twice
-- Change csv_data_fname to the csv to read from if neccessary 
-- Change save_directory to the name of the directory to download to (not reccomended)
+Under the SCC class directory, under /liberator_team/liberator_data/, is the full dataset for The Liberator. One can download or copy these folders for custom testing.
 
 # Detailed Breakdown of Pipeline
 
-The actual pipeline processes the input in four major stages: column extraction & object detection, article segmentation, OCR & NER, and final output consolidation.
+The actual pipeline processes the input in four major stages: column extraction & object detection, article segmentation, OCR & NER, text classification, and final output consolidation.
 
 ## Column Extraction and Object Detection
 
@@ -116,9 +94,15 @@ After article segmentation, the pipeline runs a cropping script upon all of the 
 
 The extracted text from the OCR portion is put through Stanford CoreNLP's Stanza package, an NLP package for entity recognition. Out of the box, this package is very simple to use, effective, and free as well. We've found excellent results in Stanza and with its ease-of-use, ultimately chose this package for our NER requirements. Another package considered was spaCy entity recognizer, and spaCy was again used for the attempted spell-correction portion of the pipeline.
 
+## Text Classification
+
+After the OCR & NER are completed, the text classification part of the model begins (second_model.py). Given the fact that there is no labeled data, we implemented an unsupervised approach to multi-label text classification called lbl2vec. The github repo for that project can be viewed [here](https://github.com/sebischair/Lbl2Vec). This model takes in the labels to classify text as, keywords associated with these labels (specified by our sponsor at BPL, Eben English), along with the documents we are classifying and automatically produces similarity scores for each document to each respective label.
+
+One important note is that the source code for lbl2vec uses [doc2vec](https://radimrehurek.com/gensim/models/doc2vec.html) under the hood. It automatically specifies a parameter for the doc2vec that ignores all words that are represented under 50 times in the dataset. We found this parameter to be beneficial for the model's prediction when being run on a large number of issues (10+). However, when running on 3 or less issues it causes the model to not recognize all keywords for a given label, leading the model training sequence to crash. We have found for testing purposes, an easy workaround is to simply specify "the" as one of the keywords for each label to ensure it does not crash, or by changing the internal source code to not specify the `min_count` parameter.
+
 ## JSON Output
 
-The final output of the entire pipeline is a JSON output full of the entire input dataset's processing. The output JSON encodes article information, including file/page location, location coordinates, OCR text, title, and named entities. 
+The final output of the entire pipeline is a JSON output full of the entire input dataset's processing. The output JSON encodes article information, including file/page location, location coordinates, OCR text, title, named entities, and the three most likely subjects as determined by the lbl2vec model. 
 
 The final presentation of this project for Spark! gave a detailed breakdown of the JSON output and its analogy to the actual Liberator pages. The presentation is available [here on Google Slides](https://docs.google.com/presentation/d/1ic3R6HgVVC_7Ymgjw_hyrITFRV563MjEC8D31PpCte4/edit?usp=sharing).
 
