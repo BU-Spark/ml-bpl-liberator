@@ -28,12 +28,10 @@ set_up_venvs_scc:
 
 download_dataset_SCC:
 ifdef num_images
-	module load python3/3.7.7 && virtualenvs/venv1/bin/python download_liberator.py -n $(num_images)
+	module load python3/3.7.7 && virtualenvs/venv1/bin/python data/download_liberator.py -n $(num_images)
 else
-	module load python3/3.7.7 && virtualenvs/venv1/bin/python download_liberator.py
+	module load python3/3.7.7 && virtualenvs/venv1/bin/python data/download_liberator.py
 endif
-
-
 
 clean:
 	rm -rf data/npy_outputs/*
