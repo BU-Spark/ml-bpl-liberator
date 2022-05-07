@@ -26,6 +26,15 @@ set_up_venvs_scc:
 	module load python3/3.8.3 && python3 -m virtualenv virtualenvs/venv2 && source virtualenvs/venv2/bin/activate && pip install -r requirements_2.txt && deactivate
 	module load python3/3.7.7 && python3 -m virtualenv virtualenvs/venv1 && source virtualenvs/venv1/bin/activate && pip install -r requirements_1.txt && deactivate
 
+download_dataset_SCC:
+ifdef num_images
+	module load python3/3.7.7 && virtualenvs/venv1/bin/python download_liberator.py -n $(num_images)
+else
+	module load python3/3.7.7 && virtualenvs/venv1/bin/python download_liberator.py
+endif
+
+
+
 clean:
 	rm -rf data/npy_outputs/*
 	rm -rf data/cropped_articles/*
