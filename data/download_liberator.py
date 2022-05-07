@@ -2,6 +2,7 @@ import pandas as pd
 import wget
 import os
 from tqdm import tqdm 
+from argparse import ArgumentParser
 
 """
 This python file downloads The Liberator dataset based off 
@@ -23,7 +24,14 @@ USAGE:
 
 csv_data_fname = 'data/liberator_full_dataset.csv'# name of csv to read from (in same parent directory)
 save_directory = 'data/full_dataset'  # directory name where data will be downloaded
-num_pages = 5 # change this to a non zero value to download only a certain number of pages. (useful for testing)
+num_pages = None # change this to a non zero value to download only a certain number of pages. (useful for testing)
+
+parser = ArgumentParser()
+parser.add_argument("-n", "--num_images")
+args = vars(parser.parse_args())
+
+if args['num_images'] is not None:
+    num_pages = args['num_images']
 
 # Read in the data, create directory to store dataset
 if num_pages:
