@@ -131,12 +131,19 @@ Liebl, B., & Burghardt, M. (2020). An Evaluation of DNN Architectures for Page S
 
 Peng Qi, Yuhao Zhang, Yuhui Zhang, Jason Bolton and Christopher D. Manning. 2020. Stanza: A Python Natural Language Processing Toolkit for Many Human Languages. In Association for Computational Linguistics (ACL) System Demonstrations. 2020. [pdf][bib]
 
+https://www.scitepress.org/Papers/2021/107103/107103.pdf
+
 https://medium.com/@blacksmithforlife/better-ocr-for-newspapers-c7c1e2788b7a
 
 https://github.com/weirdindiankid/CS501-Liberator-Project
 
-Many thanks to the Fall '20 Liberator team and https://github.com/IanSaucy for their start and advice on this project, and also to the BU Spark! faculty and staff.
+Many thanks to the Fall '20 Liberator team, Spring '21 Liberator team, [Ian Saucy](https://github.com/IanSaucy), [Langdon White](https://github.com/langdon) and also to the BU Spark! faculty and staff.
 
-<img align="left" img src="https://www.bu.edu/spark/files/2017/04/spark-logo-round.png" height="100"/>  
-<img src="https://cor-liv-cdn-static.bibliocommons.com/images/MA-BOSTON-BRANCH/logo.png?1613638160260" width="200"/> 
+<p align="center" float="center">
+  <img src="https://www.bpl.org/wp-content/uploads/sites/30/2016/12/share_logo.png" height="200"/> 
+  <img img src="https://www.bu.edu/spark/files/2017/04/spark-logo-round.png" height="200"/>  
+  <img img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Boston_University_seal.svg/2048px-Boston_University_seal.svg.png" height="200"/> 
+</p>
+  
+
 
