@@ -6,6 +6,9 @@ data/hold
 data/segment_outputs/*
 data/output_images/*
 data/JSON_outputs/*
+data/full_dataset/*
+data/npy_outputs/*
+!data/npy_outputs/image_error_list.csv
 
 ner/stanza_resources
 
@@ -19,5 +22,6 @@ bbz-segment/05_prediction/data/models
 config
 definitions.pyc
 pyvenv.cfg
+**/.swp
 
 virtualenvs

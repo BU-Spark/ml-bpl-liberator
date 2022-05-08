@@ -27,11 +27,11 @@ save_directory = 'data/full_dataset'  # directory name where data will be downlo
 num_pages = None # change this to a non zero value to download only a certain number of pages. (useful for testing)
 
 parser = ArgumentParser()
-parser.add_argument("-n", "--num_images")
+parser.add_argument("-num_pages")
 args = vars(parser.parse_args())
 
-if args['num_images'] is not None:
-    num_pages = args['num_images']
+if args['num_pages']:
+    num_pages = int(args['num_pages'])
 
 # Read in the data, create directory to store dataset
 if num_pages:
