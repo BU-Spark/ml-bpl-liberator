@@ -112,7 +112,7 @@ One important note is that the source code for lbl2vec uses [doc2vec](https://ra
 
 ## JSON Output
 
-The final output of the entire pipeline is a JSON output full of the entire input dataset's processing. The output JSON encodes article information, including file/page location, location coordinates, OCR text, title, named entities, and the three most likely subjects as determined by the lbl2vec model. 
+The final output of the entire pipeline is a JSON output full of the entire input dataset's processing, located at data/JSON_outputs/final_data.json. The output JSON encodes article information, including file/page location, location coordinates, OCR text, title, named entities, and the three most likely subjects as determined by the lbl2vec model. 
 
 The final presentation of this project for Spark! gave a detailed breakdown of the JSON output and its analogy to the actual Liberator pages. The presentation is available [here on Google Slides](https://docs.google.com/presentation/d/1of0GB3tVkiWhEsMYsZdNCNg7joV3LmISnw3UpSzlnxc/edit).
 

@@ -35,6 +35,7 @@ endif
 
 clean:
 	rm -rf data/npy_outputs/*
+	touch data/npy_outputs/image_error_list.csv
 	rm -rf data/cropped_articles/*
 	rm -rf data/output_images/*
 	rm -rf data/segment_outputs/*
