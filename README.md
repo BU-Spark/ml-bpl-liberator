@@ -63,14 +63,20 @@ Inside of data/, there is a download_liberator.py (the downloader) and a liberat
 
 NOTES: 
 
-By default when you run download_liberator.py it will download the full dataset (~7,500 images or 40 GB) to a directory on the same level called 'full_dataset'. Within this directory will be a directory for each issue, named after its issue ID. Images will be saved to the correct issue directory, about 4 images per issue. If images are already present in the correct issue directory, they will not be downloaded twice.
+By default when you run download_liberator.py without any changes it will download the full dataset (~7,500 images or 40 GB) to a directory on the same level called 'full_dataset'. Within this directory will be a directory for each issue, named after its issue ID. Images will be saved to the correct issue directory, about 4 images per issue. If images are already present in the correct issue directory, they will not be downloaded twice.
 
-USAGE:
+PERSONAL DESKTOP USAGE:
 
-- If you dont want to download the full dataset, change num_pages to the number of images you want to download (useful for testing)
+- If you dont want to download the full dataset, manually change num_pages in the file to the number of images you want to download (useful for testing)
   - if you want to download the full dataset later these images wont be downloaded twice
 - Change csv_data_fname to a different csv to read from (if neccessary)
 - Change save_directory to the name of the directory to download to (not reccomended)
+
+SCC USAGE:
+
+This has been integrated with the makefile for ease of use on the SCC. You can run these commands in the terminal.
+  - To download the FULL dataset: make download_liberator_scc
+  - To download a portion of the dataset: make download_liberator_scc num_pages=*[number of pages]*
 
 # Detailed Breakdown of Pipeline
 
