@@ -127,7 +127,7 @@ The final presentation of this project for Spark! gave a detailed breakdown of t
 
 The primary area of improvement is in the article segmentation accuracy. Indeed, we believe the accuracy and effectiveness of article segmentation can be greatly improved by finetuning the given sep models from bbz-segment with Liberator data, or, transfer learning on the EfficientNet architecture directly just as in bbz-segment. According to the research in bbz-segment's approach, 40 fully-labeled newspaper pages are enough to obtain a reasonably accurate object detection model for a given usecase.
 
-While very efficient and accurate, the column extractor is not perfect, and does not work well on certain issues. See [here](for more details).
+While very efficient and accurate, the column extractor is not perfect, and does not work well on certain issues. See [here](https://github.com/BU-Spark/ml-bpl-liberator/issues/22) for more details.
 
 The stages of our pipeline are built in linear fashion, where an entire stage must be complete for all inputs before the next stage can begin. This is slow and inefficient even on the SCC. It would be a worthwhile effort to multithread many of the processes inside of the article segmentation portion of the pipeline, and the main stages of the pipeline themselves.
 
